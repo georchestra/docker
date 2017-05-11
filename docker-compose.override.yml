@@ -1,0 +1,48 @@
+version: '2'
+
+# Complementary services, not part of geOrchestra core.
+# They are made to ease your life as a developer.
+# **NOT** production ready !
+
+services:
+  georchestra.mydomain.org:
+    image: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      #- "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./ssl:/etc/traefik/ssl/
+      - /dev/null:/traefik.toml
+    command: --web --docker --logLevel=INFO --docker.domain='mydomain.org' --docker.exposedbydefault='false' --docker.watch --entryPoints='Name:https Address::443 TLS:/etc/traefik/ssl/georchestra.mydomain.org.crt,/etc/traefik/ssl/georchestra.mydomain.org.key' --entryPoints='Name:http Address::80 Redirect.EntryPoint:https' --defaultentrypoints=http,https
+
+
+  proxy:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=sp"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org"
+      - "traefik.frontend.passHostHeader=true"
+
+  smtp:
+    image: camptocamp/smtp-sink:latest
+
+  courier-imap:
+    image: camptocamp/courier-imap:latest
+    volumes_from:
+      - smtp:rw
+
+  webmail:
+    image: camptocamp/sqwebmail:latest
+    ports:
+      - "8081:80"
+    volumes_from:
+      - smtp:rw
+
+  ssh:
+    image: georchestra/ssh:latest
+    ports:
+      - "2222:22"
+    volumes:
+      - geoserver_geodata:/mnt/geoserver_geodata

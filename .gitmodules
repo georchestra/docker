@@ -1,0 +1,4 @@
+[submodule "datadir"]
+	path = datadir
+	url = https://github.com/georchestra/datadir.git
+	branch = docker-master
