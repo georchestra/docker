@@ -41,7 +41,7 @@ services:
       - smtp:rw
 
   ssh:
-    image: georchestra/ssh:latest
+    image: georchestra/ssh_data:latest
     ports:
       - "2222:22"
     volumes:
