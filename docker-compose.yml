@@ -49,7 +49,7 @@ services:
       - ldap
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=1G
@@ -59,7 +59,7 @@ services:
     depends_on:
       - ldap
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=1G
@@ -69,7 +69,7 @@ services:
     depends_on:
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - mapfishapp_uploads:/mnt/mapfishapp_uploads
     environment:
       - XMS=256M
@@ -80,7 +80,7 @@ services:
     depends_on:
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - extractorapp_extracts:/mnt/extractorapp_extracts
     environment:
       - XMS=256M
@@ -89,7 +89,7 @@ services:
   header:
     image: georchestra/header:latest
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=512M
@@ -100,7 +100,7 @@ services:
       - ldap
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=1G
@@ -111,7 +111,7 @@ services:
       - ldap
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
       - XMS=256M
@@ -122,7 +122,7 @@ services:
     depends_on:
       - database
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=1G

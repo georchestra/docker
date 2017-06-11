@@ -56,7 +56,7 @@ docker-compose -f docker-compose.yml -f docker-compose-override.yml -f docker-co
 
 ## Customising
 
-Adjust the configuration in the `datadir` folder according to your needs.
+Adjust the configuration in the `config` folder according to your needs.
 Reading the [quick configuration guide](https://github.com/georchestra/datadir/blob/docker-master/README.md) might help !
 
 

@@ -11,7 +11,7 @@ services:
     image: georchestra/geowebcache:latest
     volumes:
       - geowebcache_tiles:/mnt/geowebcache_tiles
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=1G
       - XMX=2G
@@ -20,7 +20,7 @@ services:
   catalogapp:
     image: georchestra/catalogapp:latest
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=512M
@@ -29,7 +29,7 @@ services:
   downloadform:
     image: georchestra/downloadform:latest
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=512M
@@ -38,7 +38,7 @@ services:
   atlas:
     image: georchestra/atlas:latest
     volumes:
-      - ./datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=512M
       - XMX=2G
