@@ -2,7 +2,9 @@
 
 ## Quick Start
 
-Clone this repo to run geOrchestra on Docker in a minute:
+Install a recent [docker](https://docs.docker.com/engine/installation/) & [docker-compose](https://docs.docker.com/compose/install/) version (not from your distro, these packages are probably too old).
+
+Clone this repo and its submodule using:
 ```
 git clone https://github.com/georchestra/docker.git
 cd docker && git submodule update --init --remote
@@ -53,13 +55,21 @@ If you need them, you have to include a complementary docker-compose file at run
 docker-compose -f docker-compose.yml -f docker-compose-override.yml -f docker-compose.other-apps.yml up
 ```
 
+## Upgrading
+
+Images and configuration are updated regularly.
+
+To upgrade, we recommend you to:
+ * update the configuration with `git submodule update --remote`
+ * update the software with `docker-compose pull`
+
 
 ## Customising
 
 Adjust the configuration in the `config` folder according to your needs.
 Reading the [quick configuration guide](https://github.com/georchestra/datadir/blob/docker-master/README.md) might help !
 
-
+Most changes will require a service restart, except maybe updating viewer contexts & addons (`F5` will do).
 
 ## Building
 
