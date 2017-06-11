@@ -42,7 +42,7 @@ These docker-compose files describe:
  * how they are linked together,
  * where the configuration and data volumes are
 
-The `docker-compose.override.yml` file adds services to interact with your geOrchestra instance (their are not part of geOrchestra "core"):
+The `docker-compose.override.yml` file adds services to interact with your geOrchestra instance (they are not part of geOrchestra "core"):
  * reverse proxy / load balancer
  * ssh / rsync services,
  * smtp, webmail.
