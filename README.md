@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-Grab a machine with a decent amount of RAM (at least 8Gb, better with 16Gb).
+Grab a machine with a decent amount of RAM (at least 8Gb, better with 12 or 16Gb).
 
 Install a recent [docker](https://docs.docker.com/engine/installation/) & [docker-compose](https://docs.docker.com/compose/install/) version (not from your distro, these packages are probably too old).
 
