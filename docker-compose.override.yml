@@ -10,13 +10,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      #- "8080:8080"
+      # uncomment the next line to get a web ui + api at https://georchestra.mydomain.org:8080/traefik/
+      #- "8080:8080" 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./ssl:/etc/traefik/ssl/
-      - /dev/null:/traefik.toml
-    command: --web --docker --logLevel=INFO --docker.domain='mydomain.org' --docker.exposedbydefault='false' --docker.watch --entryPoints='Name:https Address::443 TLS:/etc/traefik/ssl/georchestra.mydomain.org.crt,/etc/traefik/ssl/georchestra.mydomain.org.key' --entryPoints='Name:http Address::80 Redirect.EntryPoint:https' --defaultentrypoints=http,https
-
+      - ./resources/ssl:/etc/traefik/ssl/
+      - ./resources/traefik.toml:/traefik.toml
 
   proxy:
     labels:
