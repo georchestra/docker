@@ -31,18 +31,6 @@ services:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
 
-  geoserver:
-    image: georchestra/geoserver:latest
-    depends_on:
-      - ldap
-    volumes:
-      - geoserver_datadir:/mnt/geoserver_datadir
-      - geoserver_geodata:/mnt/geoserver_geodata
-      - geoserver_tiles:/mnt/geoserver_tiles
-    environment:
-      - XMS=256M
-      - XMX=8G
-
   proxy:
     image: georchestra/security-proxy:latest
     depends_on:
@@ -63,6 +51,14 @@ services:
     environment:
       - XMS=256M
       - XMX=1G
+
+  header:
+    image: georchestra/header:latest
+    volumes:
+      - ./config:/etc/georchestra
+    environment:
+      - XMS=256M
+      - XMX=512M
 
   mapfishapp:
     image: georchestra/mapfishapp:latest
@@ -86,13 +82,17 @@ services:
       - XMS=256M
       - XMX=2G
 
-  header:
-    image: georchestra/header:latest
+  geoserver:
+    image: georchestra/geoserver:latest
+    depends_on:
+      - ldap
     volumes:
-      - ./config:/etc/georchestra
+      - geoserver_datadir:/mnt/geoserver_datadir
+      - geoserver_geodata:/mnt/geoserver_geodata
+      - geoserver_tiles:/mnt/geoserver_tiles
     environment:
       - XMS=256M
-      - XMX=512M
+      - XMX=8G
 
   ldapadmin:
     image: georchestra/ldapadmin:latest
