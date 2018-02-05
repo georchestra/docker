@@ -87,6 +87,7 @@ services:
     depends_on:
       - ldap
     volumes:
+      - ./config:/etc/georchestra
       - geoserver_datadir:/mnt/geoserver_datadir
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
