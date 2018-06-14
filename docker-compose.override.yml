@@ -45,8 +45,6 @@ services:
 
   webmail:
     image: camptocamp/sqwebmail:latest
-#    ports:
-#      - "8081:80"
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
     labels:
