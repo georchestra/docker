@@ -45,11 +45,18 @@ services:
 
   webmail:
     image: camptocamp/sqwebmail:latest
-    ports:
-      - "8081:80"
+#    ports:
+#      - "8081:80"
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
     labels:
       - "traefik.enable=true"
       - "traefik.backend=webmail"
       - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/webmail"
+
+  ssh:
+    image: georchestra/ssh_data:latest
+    ports:
+      - "2222:22"
+    volumes:
+      - geoserver_geodata:/mnt/geoserver_geodata
