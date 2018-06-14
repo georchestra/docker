@@ -36,6 +36,13 @@ rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra.mydomain.org
 
 Files uploaded into this volume will also be available to the geoserver instance in `/mnt/geoserver_geodata/`.
 
+Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.  
+These emails can be read on https://georchestra.mydomain.org/webmail/ (with login `smtp` and password `smtp`).
+
+Stop geOrchestra with
+```
+docker-compose down
+```
 
 ## Notes
 
@@ -76,4 +83,4 @@ Most changes will require a service restart, except maybe updating viewer contex
 ## Building
 
 Images used in the current composition are pulled from docker hub, which means they've been compiled by our CI.
-In case you have to build these images by yourself (for instance, to rely on stable branches), please refer to the [docker images build instructions](https://github.com/georchestra/georchestra/blob/17.12/docker/README.md).
+In case you have to build these images by yourself (for instance, to rely on stable branches), please refer to the [docker images build instructions](https://github.com/georchestra/georchestra/blob/master/docker/README.md).

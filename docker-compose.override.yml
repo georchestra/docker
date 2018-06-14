@@ -9,7 +9,7 @@ volumes:
 
 services:
   georchestra.mydomain.org:
-    image: traefik
+    image: traefik:1.4.5
     ports:
       - "80:80"
       - "443:443"
@@ -49,10 +49,7 @@ services:
       - "8081:80"
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
-
-  ssh:
-    image: georchestra/ssh_data:latest
-    ports:
-      - "2222:22"
-    volumes:
-      - geoserver_geodata:/mnt/geoserver_geodata
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=webmail"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/webmail"
