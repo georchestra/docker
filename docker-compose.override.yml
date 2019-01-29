@@ -45,6 +45,9 @@ services:
 
   webmail:
     image: camptocamp/sqwebmail:latest
+    environment:
+      - IMAP_HOSTNAME=courier-imap
+      - SMTP_HOSTNAME=smtp-sink
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
     labels:
