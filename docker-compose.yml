@@ -107,7 +107,7 @@ services:
       - XMX=1G
 
   geonetwork:
-    image: georchestra/geonetwork:3-latest
+    image: georchestra/geonetwork:341-latest
     depends_on:
       - ldap
       - database
