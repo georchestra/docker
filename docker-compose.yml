@@ -39,6 +39,7 @@ services:
     volumes:
       - ./config:/etc/georchestra
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
 
@@ -49,6 +50,7 @@ services:
     volumes:
       - ./config:/etc/georchestra
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
 
@@ -57,6 +59,7 @@ services:
     volumes:
       - ./config:/etc/georchestra
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=512M
 
@@ -68,6 +71,7 @@ services:
       - ./config:/etc/georchestra
       - mapfishapp_uploads:/mnt/mapfishapp_uploads
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=2G
 
@@ -79,6 +83,7 @@ services:
       - ./config:/etc/georchestra
       - extractorapp_extracts:/mnt/extractorapp_extracts
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=2G
 
@@ -92,6 +97,7 @@ services:
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=8G
 
@@ -103,6 +109,7 @@ services:
     volumes:
       - ./config:/etc/georchestra
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
 
@@ -115,6 +122,7 @@ services:
       - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
 
@@ -125,5 +133,6 @@ services:
     volumes:
       - ./config:/etc/georchestra
     environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
