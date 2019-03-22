@@ -2,7 +2,7 @@ version: "3"
 
 volumes:
   geowebcache_tiles:
-
+  geowebcache_datadir:
 
 services:
 
@@ -10,6 +10,7 @@ services:
   geowebcache:
     image: georchestra/geowebcache:latest
     volumes:
+      - geowebcache_datadir:/mnt/geowebcache_datadir
       - geowebcache_tiles:/mnt/geowebcache_tiles
       - ./config:/etc/georchestra
     environment:
