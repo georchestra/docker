@@ -8,7 +8,7 @@ services:
 
   # standalone geowebcache:
   geowebcache:
-    image: georchestra/geowebcache:latest
+    image: georchestra/geowebcache:18.06
     volumes:
       - geowebcache_datadir:/mnt/geowebcache_datadir
       - geowebcache_tiles:/mnt/geowebcache_tiles
@@ -19,7 +19,7 @@ services:
 
   # atlas printing services, eventually queried by the mapfishapp atlas addon
   atlas:
-    image: georchestra/atlas:latest
+    image: georchestra/atlas:18.06
     volumes:
       - ./config:/etc/georchestra
     environment:

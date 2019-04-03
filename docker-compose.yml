@@ -13,7 +13,7 @@ volumes:
 
 services:
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:18.06
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -21,7 +21,7 @@ services:
       - postgresql_data:/var/lib/postgresql/data
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:18.06
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
@@ -32,7 +32,7 @@ services:
       - ldap_config:/etc/ldap
 
   proxy:
-    image: georchestra/security-proxy:latest
+    image: georchestra/security-proxy:18.06
     depends_on:
       - ldap
       - database
@@ -44,7 +44,7 @@ services:
       - XMX=1G
 
   cas:
-    image: georchestra/cas:latest
+    image: georchestra/cas:18.06
     depends_on:
       - ldap
     volumes:
@@ -55,7 +55,7 @@ services:
       - XMX=1G
 
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:18.06
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -64,7 +64,7 @@ services:
       - XMX=512M
 
   mapfishapp:
-    image: georchestra/mapfishapp:latest
+    image: georchestra/mapfishapp:18.06
     depends_on:
       - database
     volumes:
@@ -76,7 +76,7 @@ services:
       - XMX=2G
 
   extractorapp:
-    image: georchestra/extractorapp:latest
+    image: georchestra/extractorapp:18.06
     depends_on:
       - database
     volumes:
@@ -88,7 +88,7 @@ services:
       - XMX=2G
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:18.06
     depends_on:
       - ldap
     volumes:
@@ -102,7 +102,7 @@ services:
       - XMX=8G
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:18.06
     depends_on:
       - ldap
       - database
@@ -114,7 +114,7 @@ services:
       - XMX=1G
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:18.06
     depends_on:
       - ldap
       - database
@@ -127,7 +127,7 @@ services:
       - XMX=6G
 
   analytics:
-    image: georchestra/analytics:latest
+    image: georchestra/analytics:18.06
     depends_on:
       - database
     volumes:
