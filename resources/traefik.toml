@@ -99,40 +99,26 @@ defaultEntryPoints = ["http", "https"]
       [[entryPoints.https.tls.certificates]]
       certFile = "/etc/traefik/ssl/georchestra.mydomain.org.crt"
       keyFile = "/etc/traefik/ssl/georchestra.mydomain.org.key"
+  [entryPoints.traefik-api]
+  address = ":8080"
+    [entryPoints.traefik-api.tls]
+      [[entryPoints.traefik-api.tls.certificates]]
+      certFile = "/etc/traefik/ssl/georchestra.mydomain.org.crt"
+      keyFile = "/etc/traefik/ssl/georchestra.mydomain.org.key"
 
 ################################################################
 # Web configuration backend
 ################################################################
 
-[web]
-address = ":8080"
+[api]
+entryPoint = "traefik-api"
+dashboard = true
 
-# Set the root path for webui and API
-#
-# Optional
-
-path = "/traefik"
-
-# SSL certificate and key used
-#
-# Optional
-
-CertFile = "/etc/traefik/ssl/georchestra.mydomain.org.crt"
-KeyFile = "/etc/traefik/ssl/georchestra.mydomain.org.key"
-
-# Set REST API to read-only mode
-#
-# Optional
-
-ReadOnly = true
-
-# To enable more detailed statistics
-[web.statistics]
-  RecentErrors = 10
 
 # To enable Traefik to export internal metrics to Prometheus
-# [web.metrics.prometheus]
-#   Buckets=[0.1,0.3,1.2,5.0]
+# [metrics.metrics.prometheus]
+#   entryPoint = "traefik-api"
+#   buckets=[0.1,0.3,1.2,5.0]
 
 
 ################################################################
