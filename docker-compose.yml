@@ -7,6 +7,7 @@ volumes:
   geoserver_geodata:
   geoserver_datadir:
   geoserver_tiles:
+  geoserver_native_libs:
   mapfishapp_uploads:
   extractorapp_extracts:
   geonetwork_datadir:
@@ -96,6 +97,7 @@ services:
       - geoserver_datadir:/mnt/geoserver_datadir
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
+      - geoserver_native_libs:/mnt/geoserver_native_libs
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
