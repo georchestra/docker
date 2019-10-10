@@ -26,7 +26,7 @@ services:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
         - SLAPD_PASSWORD=secret
-        - SLAPD_ADDITIONAL_MODULES=groupofmembers
+        - SLAPD_ADDITIONAL_MODULES=groupofmembers,openssh
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
