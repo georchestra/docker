@@ -113,7 +113,7 @@ services:
       - XMX=1G
 
   geonetwork:
-    image: georchestra/geonetwork:18.06
+    image: georchestra/geonetwork:341-18.06
     depends_on:
       - ldap
       - database
