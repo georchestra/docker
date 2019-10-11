@@ -27,6 +27,7 @@ services:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
         - SLAPD_PASSWORD=secret
+        - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
