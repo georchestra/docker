@@ -44,6 +44,40 @@ Stop geOrchestra with
 docker-compose down
 ```
 
+## Geofence
+
+If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
+
+```
+image: georchestra/geoserver:geofence-19.06-SNAPSHOT
+```
+(replace `19.06-SNAPSHOT` by the appropriate version).
+
+And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
+
+```
+    environment:
+      - JAVA_OPTIONS=-Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties
+```
+
+
+Then, edit the file `config/geoserver/geofence/geofence-datasource-ovr.properties`, and change the line
+
+```
+#geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=validate
+```
+to 
+```
+geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
+```
+
+Finally, due to [this defect](https://github.com/georchestra/georchestra/issues/2620) , once you executed `docker-compose up` and the database is up and running, execute:
+
+```
+docker-compose exec database psql -U georchestra -c "create sequence if not exists hibernate_sequence;"
+```
+
+
 ## Notes
 
 These docker-compose files describe:
