@@ -93,9 +93,9 @@ The `docker-compose.override.yml` file adds services to interact with your geOrc
 Feel free to comment out the apps you do not need.
 
 The base docker composition does not include any standalone geowebcache instance, nor the atlas module.
-If you need them, you have to include a complementary docker-compose file at run-time:
+If you need them, you have to include the corresponding complementary docker-compose file at run-time:
 ```
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.other-apps.yml up
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.gwc.yml -f docker-compose.atlas.yml up
 ```
 
 ## Upgrading
