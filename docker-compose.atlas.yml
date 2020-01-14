@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  # atlas printing services, eventually queried by the mapfishapp atlas addon
+  atlas:
+    image: georchestra/atlas:latest
+    volumes:
+      - ./config:/etc/georchestra
+    environment:
+      - XMS=512M
+      - XMX=2G
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
