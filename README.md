@@ -49,9 +49,9 @@ docker-compose down
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:geofence-19.06-SNAPSHOT
+image: georchestra/geoserver:20.0.x-geofence
 ```
-(replace `19.06-SNAPSHOT` by the appropriate version).
+(replace `20.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 
