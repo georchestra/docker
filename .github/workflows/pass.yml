@@ -1,0 +1,10 @@
+name: "pass"
+on: [push, pull-request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+    - name: passing
+      run: |
+        echo This is fine.
