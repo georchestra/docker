@@ -46,11 +46,11 @@ docker-compose down
 
 ## SSL/TLS
 
-This repo comes with a self signe cert which is _not_ valid. To test with a valid cert you can
-install [mkcert](https://github.com/FiloSottile/mkcert) and do the following:
+This repo comes with a self signed cert which is _not_ valid. To test with a valid cert you can
+install [mkcert](https://github.com/FiloSottile/mkcert) on your host and do the following:
 
 * `mkcert -install`. Only do this once ! It'll install a fake root cert in system store (and some
-  other see mkcert doc)
+  others see mkcert doc)
 * `cd resources/ssl && mkcert georchestra.mydomain.org`
 * `mv georchestra.mydomain.org.pem georchestra.mydomain.org.crt`
 * `mv georchestra.mydomain.org-key.pem georchestra.mydomain.org.key`
