@@ -1,0 +1,15 @@
+# Cadastrapp is satelite project of the georchestra community that aim at
+# displaying french "cadastre" informations. see https://github.com/georchestra/cadastrapp
+version: '3'
+services:
+  cadastrapp:
+    image: georchestra/cadastrapp:latest
+    environment:
+      XMX: 512m
+      JAVA_OPTIONS: -Duser.language=fr -Duser.country=FR
+      CADASTRAPP_JDBC_URL: jdbc:postgresql://cadastrapp-db.georchestra-cadastrapp:5432/cadastrapp
+      CADASTRAPP_JDBC_USER: cadastrapp
+      CADASTRAPP_JDBC_PASSWORD: cadastrapp
+    volumes:
+      - ./config:/etc/georchestra
+
