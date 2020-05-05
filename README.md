@@ -89,6 +89,15 @@ Finally, due to [this defect](https://github.com/georchestra/georchestra/issues/
 docker-compose exec database psql -U georchestra -c "create sequence if not exists hibernate_sequence;"
 ```
 
+## Cadastrapp
+
+In order to run cadastrapp. You'll need to execute some steps in order to get it working:
+* create two databases, by default `cadqgis` and `cadastrapp`. `cadastrapp` need dblink extension
+  (`CREATE EXTENSION dblink`).
+* You'll need to add the addon to mapfishapp in the datadir. (copy `https://github.com/georchestra/cadastrapp/tree/master/addons/cadastrapp` into `<datadir>/mapfishapp/addons/cadastrapp`
+* Run scripts from cadastrapp to get the db properly setup
+
+
 
 ## Notes
 
