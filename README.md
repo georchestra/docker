@@ -17,6 +17,11 @@ Edit your `/etc/hosts` file with the following:
 127.0.1.1	georchestra.mydomain.org
 ```
 
+Choose which branch to run, eg for latest stable:
+```
+git checkout 20.0 && git submodule update
+```
+
 Run geOrchestra with
 ```
 docker-compose up
