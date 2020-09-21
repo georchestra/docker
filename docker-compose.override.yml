@@ -14,11 +14,13 @@ services:
       - "80:80"
       - "443:443"
       # uncomment the next line to get a web ui + api at https://georchestra.mydomain.org:8080/traefik/
-      #- "8080:8080" 
+      #- "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./resources/ssl:/etc/traefik/ssl/
       - ./resources/traefik.toml:/traefik.toml
+    restart: always
+
 
   proxy:
     labels:
@@ -37,11 +39,13 @@ services:
     image: camptocamp/smtp-sink:latest
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
+    restart: always
 
   courier-imap:
     image: camptocamp/courier-imap:latest
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
+    restart: always
 
   webmail:
     image: camptocamp/sqwebmail:latest
@@ -54,6 +58,7 @@ services:
       - "traefik.enable=true"
       - "traefik.backend=webmail"
       - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/webmail"
+    restart: always
 
   ssh:
     image: georchestra/ssh_data:latest
@@ -61,3 +66,4 @@ services:
       - "2222:22"
     volumes:
       - geoserver_geodata:/mnt/geoserver_geodata
+    restart: always
