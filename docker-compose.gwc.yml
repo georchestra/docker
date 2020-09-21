@@ -19,3 +19,4 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
 #    ports:
 #      - 8080:8080
+    restart: always

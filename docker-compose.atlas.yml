@@ -10,3 +10,4 @@ services:
       - XMS=512M
       - XMX=2G
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+    restart: always

@@ -20,6 +20,7 @@ services:
       - POSTGRES_PASSWORD=georchestra
     volumes:
       - postgresql_data:/var/lib/postgresql/data
+    restart: always
 
   ldap:
     image: georchestra/ldap:latest
@@ -31,6 +32,7 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
+    restart: always
 
   proxy:
     image: georchestra/security-proxy:latest
@@ -43,6 +45,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
+    restart: always
 
   cas:
     image: georchestra/cas:latest
@@ -54,6 +57,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
+    restart: always
 
   header:
     image: georchestra/header:latest
@@ -63,6 +67,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=512M
+    restart: always
 
   mapfishapp:
     image: georchestra/mapfishapp:latest
@@ -75,6 +80,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=2G
+    restart: always
 
   extractorapp:
     image: georchestra/extractorapp:latest
@@ -87,6 +93,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=2G
+    restart: always
 
   geoserver:
     image: georchestra/geoserver:latest
@@ -102,6 +109,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=8G
+    restart: always
 
   console:
     image: georchestra/console:latest
@@ -114,6 +122,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
+    restart: always
 
   geonetwork:
     image: georchestra/geonetwork:latest
@@ -127,6 +136,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
+    restart: always
 
   analytics:
     image: georchestra/analytics:latest
@@ -138,3 +148,4 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
+    restart: always
