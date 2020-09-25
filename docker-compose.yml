@@ -149,3 +149,12 @@ services:
       - XMS=256M
       - XMX=1G
     restart: always
+
+  mapstore:
+    image: geosolutionsit/mapstore2-georchestra:latest
+    depends_on:
+      - database
+    volumes:
+      - ./config:/etc/georchestra
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
