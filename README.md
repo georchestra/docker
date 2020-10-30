@@ -133,5 +133,5 @@ Most changes will require a service restart, except maybe updating viewer contex
 
 ## Building
 
-Images used in the current composition are pulled from docker hub, which means they've been compiled by our CI.
-In case you have to build these images by yourself (for instance, to rely on stable branches), please refer to the [docker images build instructions](https://github.com/georchestra/georchestra/blob/master/docker/README.md).
+Images used in the current composition are pulled from docker hub, which means they've been compiled by [github actions](https://github.com/georchestra/georchestra/actions).
+In case you have to build these images by yourself, please refer to the [docker images build instructions](https://github.com/georchestra/georchestra/blob/master/docker/README.md).
