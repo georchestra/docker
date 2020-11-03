@@ -14,7 +14,7 @@ volumes:
 
 services:
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:20.1.x
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -23,7 +23,7 @@ services:
     restart: always
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:20.1.x
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
@@ -35,7 +35,7 @@ services:
     restart: always
 
   proxy:
-    image: georchestra/security-proxy:latest
+    image: georchestra/security-proxy:20.1.x
     depends_on:
       - ldap
       - database
@@ -48,7 +48,7 @@ services:
     restart: always
 
   cas:
-    image: georchestra/cas:latest
+    image: georchestra/cas:20.1.x
     depends_on:
       - ldap
     volumes:
@@ -60,7 +60,7 @@ services:
     restart: always
 
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:20.1.x
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -70,7 +70,7 @@ services:
     restart: always
 
   mapfishapp:
-    image: georchestra/mapfishapp:latest
+    image: georchestra/mapfishapp:20.1.x
     depends_on:
       - database
     volumes:
@@ -96,7 +96,7 @@ services:
     restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:20.1.x
     depends_on:
       - ldap
     volumes:
@@ -112,7 +112,7 @@ services:
     restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:20.1.x
     depends_on:
       - ldap
       - database
@@ -125,7 +125,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:20.1.x
     depends_on:
       - ldap
       - database
@@ -139,7 +139,7 @@ services:
     restart: always
 
   analytics:
-    image: georchestra/analytics:latest
+    image: georchestra/analytics:20.1.x
     depends_on:
       - database
     volumes:

@@ -19,7 +19,7 @@ Edit your `/etc/hosts` file with the following:
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 20.0 && git submodule update
+git checkout 20.1 && git submodule update
 ```
 
 Run geOrchestra with
@@ -66,9 +66,9 @@ install [mkcert](https://github.com/FiloSottile/mkcert) on your host and do the 
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:20.0.x-geofence
+image: georchestra/geoserver:20.1.x-geofence
 ```
-(replace `20.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
+(replace `20.1.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 
