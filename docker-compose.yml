@@ -125,7 +125,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:20.1.x
+    image: georchestra/geonetwork:20.1.0
     depends_on:
       - ldap
       - database
