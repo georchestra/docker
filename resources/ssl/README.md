@@ -9,4 +9,4 @@ openssl req -key georchestra.mydomain.org.key -new -out georchestra.mydomain.org
 openssl x509 -req -days 3650 -in georchestra.mydomain.org.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out georchestra.mydomain.org.crt
 ```
 
-For a public service, you should use Traefik's ability to [generate its own certificates](https://docs.traefik.io/user-guide/examples/#lets-encrypt-support) using [Let's Encrypt](https://letsencrypt.org/).
+For a public service, you should use Traefik's ability to [generate its own certificates](https://doc.traefik.io/traefik/https/acme/) using [Let's Encrypt](https://letsencrypt.org/).
