@@ -19,7 +19,7 @@ Edit your `/etc/hosts` file with the following:
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 20.0 && git submodule update
+git checkout 20.1 && git submodule update
 ```
 
 Run geOrchestra with
