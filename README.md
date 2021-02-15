@@ -54,12 +54,10 @@ docker-compose down
 This repo comes with a self signed cert which is _not_ valid. To test with a valid cert you can
 install [mkcert](https://github.com/FiloSottile/mkcert) on your host and do the following:
 
-* `mkcert -install`. Only do this once ! It'll install a fake root cert in system store (and some
+* `mkcert -install`. *Only do this once !* It'll install a fake root cert in system store (and some
   others see mkcert doc)
-* `cd resources/ssl && mkcert georchestra.mydomain.org`
-* `mv georchestra.mydomain.org.pem georchestra.mydomain.org.crt`
-* `mv georchestra.mydomain.org-key.pem georchestra.mydomain.org.key`
-* `docker-compose restart georchestra.mydomain.org`
+* run `make cert`
+* `docker-compose restart georchestra.mydomain.org` if the proxy has already been started.
 
 ## Geofence
 
