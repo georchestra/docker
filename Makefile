@@ -10,6 +10,7 @@ run-core:
 
 # make local valid certs
 # mkcert need to be init first !! (must done once only)
+.ONESHELL:
 cert:
 	cd resources/ssl
 	mkcert georchestra.mydomain.org
