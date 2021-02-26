@@ -49,10 +49,9 @@ The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thank
 
 To change it:
  * Rename the traefik service in the `docker-compose.override.yml` file to match the new domain
- * Modify the three `traefik.frontend.rule` in the `docker-compose.override.yml` file
- * Change the domain in the `resources/traefik.toml` file
+ * Modify the three `traefik.http.routers.*.rule` in the `docker-compose.override.yml` file
  * Update the datadir in the config folder (hint: grep for `georchestra-127-0-1-1.traefik.me`)
- * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik.toml` file
+ * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik-config.yml` file
 
 ## Geofence
 
