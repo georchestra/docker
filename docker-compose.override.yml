@@ -8,12 +8,12 @@ volumes:
   smtp_maildir:
 
 services:
-  georchestra.mydomain.org:
+  georchestra-127-0-1-1.traefik.me:
     image: traefik:1.7
     ports:
       - "80:80"
       - "443:443"
-      # uncomment the next line to get a web ui + api at https://georchestra.mydomain.org:8080/traefik/
+      # uncomment the next line to get a web ui + api at https://georchestra-127-0-1-1.traefik.me:8080/traefik/
       #- "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -26,14 +26,14 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=sp"
-      - "traefik.frontend.rule=Host:georchestra.mydomain.org"
+      - "traefik.frontend.rule=Host:georchestra-127-0-1-1.traefik.me"
       - "traefik.frontend.passHostHeader=true"
 
   cas:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=cas"
-      - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/cas"
+      - "traefik.frontend.rule=Host:georchestra-127-0-1-1.traefik.me;PathPrefix:/cas"
 
   smtp:
     image: camptocamp/smtp-sink:latest
@@ -57,7 +57,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=webmail"
-      - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/webmail"
+      - "traefik.frontend.rule=Host:georchestra-127-0-1-1.traefik.me;PathPrefix:/webmail"
     restart: always
 
   ssh:

@@ -8,13 +8,7 @@ Install a recent [docker](https://docs.docker.com/engine/installation/) & [docke
 
 Clone this repo and its submodule using:
 ```
-git clone https://github.com/georchestra/docker.git
-cd docker && git submodule update --init --remote
-```
-
-Edit your `/etc/hosts` file with the following:
-```
-127.0.1.1	georchestra.mydomain.org
+git clone --recurse-submodules https://github.com/georchestra/docker.git
 ```
 
 Choose which branch to run, eg for latest stable:
@@ -27,7 +21,7 @@ Run geOrchestra with
 docker-compose up
 ```
 
-Open [https://georchestra.mydomain.org/](https://georchestra.mydomain.org/) in your browser.
+Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.
 
 To login, use these credentials:
  * `testuser` / `testuser`
@@ -35,38 +29,39 @@ To login, use these credentials:
 
 To upload data into the GeoServer data volume (`geoserver_geodata`), use rsync:
 ```
-rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra.mydomain.org:/mnt/geoserver_geodata/
+rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra-127-0-1-1.traefik.me:/mnt/geoserver_geodata/
 ```
 (password is: `geoserver`)
 
 Files uploaded into this volume will also be available to the geoserver instance in `/mnt/geoserver_geodata/`.
 
 Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.  
-These emails can be read on https://georchestra.mydomain.org/webmail/ (with login `smtp` and password `smtp`).
+These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (with login `smtp` and password `smtp`).
 
 Stop geOrchestra with
 ```
 docker-compose down
 ```
 
-## SSL/TLS
+## About the domain name
 
-This repo comes with a self signed cert which is _not_ valid. To test with a valid cert you can
-install [mkcert](https://github.com/FiloSottile/mkcert) on your host and do the following:
+The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thanks to [traefik.me](https://traefik.me/) which provides wildcard DNS for any IP address.
 
-* `mkcert -install`. *Only do this once !* It'll install a fake root cert in system store (and some
-  others see mkcert doc)
-* run `make cert`
-* `docker-compose restart georchestra.mydomain.org` if the proxy has already been started.
+To change it:
+ * Rename the traefik service in the `docker-compose.override.yml` file to match the new domain
+ * Modify the three `traefik.frontend.rule` in the `docker-compose.override.yml` file
+ * Change the domain in the `resources/traefik.toml` file
+ * Update the datadir in the config folder (hint: grep for `georchestra-127-0-1-1.traefik.me`)
+ * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik.toml` file
 
 ## Geofence
 
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:20.0.x-geofence
+image: georchestra/geoserver:20.1.x-geofence
 ```
-(replace `20.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
+(replace `20.1.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 
@@ -84,12 +79,6 @@ Then, edit the file `config/geoserver/geofence/geofence-datasource-ovr.propertie
 to 
 ```
 geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
-```
-
-Finally, due to [this defect](https://github.com/georchestra/georchestra/issues/2620) , once you executed `docker-compose up` and the database is up and running, execute:
-
-```
-docker-compose exec database psql -U georchestra -c "create sequence if not exists hibernate_sequence;"
 ```
 
 
@@ -118,7 +107,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-co
 Images and configuration are updated regularly.
 
 To upgrade, we recommend you to:
- * update the configuration with `git submodule update --remote`
+ * update the configuration with `git submodule update`
  * update the software with `docker-compose pull`
 
 
