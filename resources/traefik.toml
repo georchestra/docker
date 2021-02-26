@@ -97,14 +97,14 @@ defaultEntryPoints = ["http", "https"]
   address = ":443"
     [entryPoints.https.tls]
       [[entryPoints.https.tls.certificates]]
-      certFile = "/etc/traefik/ssl/georchestra.mydomain.org.crt"
-      keyFile = "/etc/traefik/ssl/georchestra.mydomain.org.key"
+      certFile = "/etc/traefik/ssl/traefik.me.crt"
+      keyFile = "/etc/traefik/ssl/traefik.me-key.pem"
   [entryPoints.traefik-api]
   address = ":8080"
     [entryPoints.traefik-api.tls]
       [[entryPoints.traefik-api.tls.certificates]]
-      certFile = "/etc/traefik/ssl/georchestra.mydomain.org.crt"
-      keyFile = "/etc/traefik/ssl/georchestra.mydomain.org.key"
+      certFile = "/etc/traefik/ssl/traefik.me.crt"
+      keyFile = "/etc/traefik/ssl/traefik.me-key.pem"
 ################################################################
 # Web configuration backend
 ################################################################
@@ -140,7 +140,7 @@ endpoint = "unix:///var/run/docker.sock"
 #
 # Required
 #
-domain = "mydomain.org"
+domain = "traefik.me"
 
 # Enable watch docker changes
 #
