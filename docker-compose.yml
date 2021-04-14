@@ -158,3 +158,16 @@ services:
       - ./config:/etc/georchestra
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
+
+  datafeeder:
+    image: georchestra/datafeeder:21.0-SNAPSHOT
+    volumes:
+      - ./config:/etc/georchestra
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m
+
+  import:
+    image: georchestra/datafeeder-frontend:21.0-SNAPSHOT
+    volumes:
+      - ./config:/etc/georchestra
+
