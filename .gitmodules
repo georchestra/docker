@@ -1,4 +1,4 @@
 [submodule "config"]
 	path = config
 	url = https://github.com/georchestra/datadir.git
-	branch = docker-datafeeder
+	branch = docker-master
