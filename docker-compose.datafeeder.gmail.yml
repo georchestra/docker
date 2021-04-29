@@ -1,0 +1,21 @@
+version: "3"
+
+# Use this docker-compose override file in tandem with the default docker-compose.yml file
+# to use the noreply.georchestra.dev@gmail.com test email as administrator email and actually
+# send emails instead of going to the smtp-sink defined in docker-compose.override.yml.
+#
+# i.e.: docker-compose -f docker-compose.yml -f docker-compose.datafeeder.gmail.yml up -d
+#
+# But before doing so, create or edit the .env file and set the SMTP_PASSWORD variable
+# to the actual account password, shared between the georchestra developers.
+services:
+  datafeeder:
+    environment:
+      - smtpPassword=${SMTP_PASSWORD}
+      - smtpHost=smtp.gmail.com
+      - smtpPort=587
+      - smtpUser=noreply.georchestra.dev@gmail.com
+      - smtpAuth=true
+      - smtpTLS=true
+      - administratorEmail=noreply.georchestra.dev@gmail.com
+

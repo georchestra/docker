@@ -4,3 +4,7 @@
 .idea/
 *.iml
 *~
+
+# ignore the .env file so we can specify environment variables that are
+# not pushed to github
+.env
