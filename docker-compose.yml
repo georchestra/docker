@@ -11,6 +11,7 @@ volumes:
   mapfishapp_uploads:
   extractorapp_extracts:
   geonetwork_datadir:
+  datafeeder_uploads:
 
 services:
   database:
@@ -163,6 +164,7 @@ services:
     image: georchestra/datafeeder:latest
     volumes:
       - ./config:/etc/georchestra
+      - datafeeder_uploads:/tmp/datafeeder
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m
 
