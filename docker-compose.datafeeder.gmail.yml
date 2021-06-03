@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 # Use this docker-compose override file in tandem with the default docker-compose.yml file
 # to use the noreply.georchestra.dev@gmail.com test email as administrator email and actually
@@ -18,4 +18,3 @@ services:
       - smtpAuth=true
       - smtpTLS=true
       - administratorEmail=noreply.georchestra.dev@gmail.com
-

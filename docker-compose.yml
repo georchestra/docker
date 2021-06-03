@@ -1,4 +1,4 @@
-version: "3"
+version: "3.1"
 
 volumes:
   postgresql_data:
@@ -13,6 +13,12 @@ volumes:
   geonetwork_datadir:
   datafeeder_uploads:
 
+secrets:
+  slapd_password:
+    file: ./secrets/slapd_password.txt
+  geoserver_privileged_user_passwd:
+    file: ./secrets/geoserver_privileged_user_passwd.txt
+
 services:
   database:
     image: georchestra/database:latest
@@ -25,10 +31,15 @@ services:
 
   ldap:
     image: georchestra/ldap:latest
+    secrets:
+      - slapd_password
+      - geoserver_privileged_user_passwd
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
-        - SLAPD_PASSWORD=secret
+        - SLAPD_PASSWORD_FILE=/run/secrets/slapd_password
+        - SLAPD_PASSWORD=
+        - GEOSERVER_PRIVILEGED_USER_PASSWORD_FILE=/run/secrets/geoserver_privileged_user_passwd
         - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
     volumes:
       - ldap_data:/var/lib/ldap
@@ -172,4 +183,3 @@ services:
     image: georchestra/datafeeder-frontend:21.0-SNAPSHOT
     volumes:
       - ./config:/etc/georchestra
-
