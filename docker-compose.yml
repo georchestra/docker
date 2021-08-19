@@ -140,13 +140,20 @@ services:
   geonetwork:
     image: georchestra/geonetwork:latest
     depends_on:
-      - ldap
+      - console
       - database
+      - kibana
+      - elasticsearch
     volumes:
       - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - DATA_DIR=/var/lib/geonetwork_data
+      - ES_HOST=elasticsearch
+      - ES_PROTOCOL=http
+      - ES_PORT=9200
+      - KB_URL=http://kibana:5601
+      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
     restart: always
@@ -195,3 +202,16 @@ services:
     image: georchestra/datafeeder-frontend:21.0-SNAPSHOT
     volumes:
       - ./config:/etc/georchestra
+
+  elasticsearch:
+    image: elasticsearch:7.9.0
+    environment:
+      discovery.type: single-node
+
+  kibana:
+    image: kibana:7.9.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+
