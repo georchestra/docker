@@ -8,7 +8,7 @@ volumes:
   smtp_maildir:
 
 services:
-  reverse-proxy-https-helper:
+  traefik-me-certificate-downloader:
     image: alpine
     command: sh -c "cd /etc/ssl/traefik
       && wget traefik.me/cert.pem -O traefik.me.crt
@@ -19,7 +19,7 @@ services:
   georchestra-127-0-1-1.traefik.me:
     image: traefik:2.4
     depends_on:
-      - reverse-proxy-https-helper
+      - traefik-me-certificate-downloader
     ports:
       - "80:80"
       - "443:443"
