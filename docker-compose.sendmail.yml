@@ -1,0 +1,20 @@
+version: "3.1"
+
+# Complementary services, not part of geOrchestra core.
+# This is an alternative proposition to the smtp sink, to manage the emails
+# Before using it in production, review the source code https://github.com/pi-geosolutions/docker-sendmail/
+# and use at your own risks, under your responsibility !
+#
+# To use it, you have to change the smtp config in config/default.properties to
+# use `sendmail` host
+#
+# Note: the sendmail service takes some time to configure. In case you have a
+# "Connection refused" error, look in the logs and wait for it to say
+# "Restarting Mail Transport Agent (MTA): sendmail." before using it
+
+services:
+  sendmail:
+    image: pigeosolutions/sendmail:20210906-1657-6e05771
+    environment:
+      HOSTNAME: georchestra-127-0-1-1.traefik.me
+    restart: always
