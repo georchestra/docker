@@ -11,6 +11,10 @@ version: "3.1"
 # Note: the sendmail service takes some time to configure. In case you have a
 # "Connection refused" error, look in the logs and wait for it to say
 # "Restarting Mail Transport Agent (MTA): sendmail." before using it
+# 
+# Note2: if sending mails fails silently, you might have filter issue. For
+# instance, personal internet boxes might be filtering your traffic and dropping
+# the packets (happened to me, I had to disable the filering option of my box)
 
 services:
   sendmail:
