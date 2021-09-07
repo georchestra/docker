@@ -42,6 +42,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.proxy.tls=true"
       - "traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
+      # CORS related. Open everything to the world.
+      - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
+      - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
+      - "traefik.http.middlewares.corsheader.headers.addvaryheader=true"
+      - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.routers.proxy.middlewares=corsheader@docker"
 
   cas:
     labels:
