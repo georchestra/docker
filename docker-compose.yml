@@ -12,6 +12,7 @@ volumes:
   extractorapp_extracts:
   geonetwork_datadir:
   datafeeder_uploads:
+  datafeeder_postgis_data:
 
 secrets:
   slapd_password:
@@ -170,6 +171,17 @@ services:
       - ./config:/etc/georchestra
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
+
+  postgis:
+    # used by datafeeder to ingest uploaded user datasets into
+    image: postgis/postgis:13-3.1-alpine
+    environment:
+      - POSTGRES_DB=datafeeder
+      - POSTGRES_USER=georchestra
+      - POSTGRES_PASSWORD=georchestra
+    volumes:
+      - datafeeder_postgis_data:/var/lib/postgresql/data
+    restart: always
 
   datafeeder:
     image: georchestra/datafeeder:latest
