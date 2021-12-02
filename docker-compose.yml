@@ -9,6 +9,7 @@ volumes:
   geoserver_tiles:
   geoserver_native_libs:
   mapfishapp_uploads:
+  mapstore_extensions:
   extractorapp_extracts:
   geonetwork_datadir:
   datafeeder_uploads:
@@ -176,8 +177,9 @@ services:
       - database
     volumes:
       - ./config:/etc/georchestra
+      - mapstore_extensions:/mnt/mapstore_extensions
     environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
+      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
 
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
