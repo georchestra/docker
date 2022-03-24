@@ -171,7 +171,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:22.0.x
+    image: georchestra/mapstore:2021.02.xx
     depends_on:
       - database
     volumes:
