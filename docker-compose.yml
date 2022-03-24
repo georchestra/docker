@@ -22,7 +22,7 @@ secrets:
 
 services:
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:22.0.x
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -31,7 +31,7 @@ services:
     restart: always
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:22.0.x
     secrets:
       - slapd_password
       - geoserver_privileged_user_passwd
@@ -48,7 +48,7 @@ services:
     restart: always
 
   proxy:
-    image: georchestra/security-proxy:latest
+    image: georchestra/security-proxy:22.0.x
     depends_on:
       - ldap
       - database
@@ -61,7 +61,7 @@ services:
     restart: always
 
   cas:
-    image: georchestra/cas:latest
+    image: georchestra/cas:22.0.x
     depends_on:
       - ldap
     volumes:
@@ -73,7 +73,7 @@ services:
     restart: always
 
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:22.0.x
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -83,7 +83,7 @@ services:
     restart: always
 
   mapfishapp:
-    image: georchestra/mapfishapp:latest
+    image: georchestra/mapfishapp:22.0.x
     depends_on:
       - database
     volumes:
@@ -96,7 +96,7 @@ services:
     restart: always
 
   extractorapp:
-    image: georchestra/extractorapp:latest
+    image: georchestra/extractorapp:22.0.x
     depends_on:
       - database
     volumes:
@@ -109,7 +109,7 @@ services:
     restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:22.0.x
     depends_on:
       - ldap
     volumes:
@@ -125,7 +125,7 @@ services:
     restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:22.0.x
     depends_on:
       - ldap
       - database
@@ -138,7 +138,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:22.0.x
     depends_on:
       - console
       - database
@@ -159,7 +159,7 @@ services:
     restart: always
 
   analytics:
-    image: georchestra/analytics:latest
+    image: georchestra/analytics:22.0.x
     depends_on:
       - database
     volumes:
@@ -171,7 +171,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:latest
+    image: georchestra/mapstore:22.0.x
     depends_on:
       - database
     volumes:
@@ -191,7 +191,7 @@ services:
     restart: always
 
   datafeeder:
-    image: georchestra/datafeeder:latest
+    image: georchestra/datafeeder:22.0.x
     volumes:
       - ./config:/etc/georchestra
       - datafeeder_uploads:/tmp/datafeeder
