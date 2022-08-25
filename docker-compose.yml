@@ -8,8 +8,6 @@ volumes:
   geoserver_datadir:
   geoserver_tiles:
   geoserver_native_libs:
-  mapfishapp_uploads:
-  extractorapp_extracts:
   geonetwork_datadir:
   datafeeder_uploads:
   datafeeder_postgis_data:
@@ -80,32 +78,6 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=512M
-    restart: always
-
-  mapfishapp:
-    image: georchestra/mapfishapp:22.0.x
-    depends_on:
-      - database
-    volumes:
-      - ./config:/etc/georchestra
-      - mapfishapp_uploads:/mnt/mapfishapp_uploads
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=2G
-    restart: always
-
-  extractorapp:
-    image: georchestra/extractorapp:22.0.x
-    depends_on:
-      - database
-    volumes:
-      - ./config:/etc/georchestra
-      - extractorapp_extracts:/mnt/extractorapp_extracts
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=2G
     restart: always
 
   geoserver:
