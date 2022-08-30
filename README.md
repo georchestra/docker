@@ -58,9 +58,9 @@ To change it:
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:20.1.x-geofence
+image: georchestra/geoserver:22.0.x-geofence
 ```
-(replace `20.1.x-geofence` by the appropriate version - use `latest-geofence` on master).
+(replace `22.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 
@@ -92,7 +92,7 @@ A specific configuration is provided in the `kibana/` subdirectory.
 
 Please note that it will require to load by hand the following file from the kibana admin ui:
 
-https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.x-dev/es/es-dashboards/data/export.ndjson#
+https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.0.6/es/es-dashboards/data/export.ndjson#
 
 
 
