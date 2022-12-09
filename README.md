@@ -13,7 +13,7 @@ git clone --recurse-submodules https://github.com/georchestra/docker.git
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 20.1 && git submodule update
+git checkout 22.0 && git submodule update
 ```
 
 Run geOrchestra with
@@ -58,9 +58,9 @@ To change it:
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:20.1.x-geofence
+image: georchestra/geoserver:22.0.x-geofence
 ```
-(replace `20.1.x-geofence` by the appropriate version - use `latest-geofence` on master).
+(replace `22.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 
@@ -79,6 +79,31 @@ to
 ```
 geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
 ```
+
+## GeoNetwork 4
+
+The use of GeoNetwork 4 requires 2 extra services compared to GeoNetwork 3, as the indexes are no longer managed by GeoNetwork itself.
+
+### Kibana
+
+The `kibana` service is used for dashboarding purposes and is integrated to the GeoNetwork admin UI. See in the `Statistics & status / Content statistics` admin menu to access it.
+
+A specific configuration is provided in the `kibana/` subdirectory.
+
+Please note that it will require to load by hand the following file from the kibana admin ui:
+
+https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.0.6/es/es-dashboards/data/export.ndjson#
+
+
+
+### Elasticsearch
+
+In the current state of the docker composition, no volume is defined, so do not expect persistence of the indexes.
+
+If you are running low on disk space, Elastic has a mechanism to pass the index in a read-only mode. You can deactivate this feature by following this guide:
+
+https://techoverflow.net/2019/04/17/how-to-disable-elasticsearch-disk-quota-watermark/
+
 
 
 ## Notes
