@@ -37,11 +37,24 @@ services:
       - "traefik.http.routers.traefik.middlewares=traefik-strip"
       - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
 
+  static:
+    image: nginx:stable
+    restart: unless-stopped
+    volumes:
+      - ./resources/static:/usr/share/nginx/html:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.static.tls=true"
+      - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
+      - "traefik.http.routers.static.priority=1"
+
   proxy:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.proxy.tls=true"
-      - "traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
+      - "traefik.http.routers.proxy.priority=100"
+      - "traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (PathPrefix(`/_static`) || PathPrefix(`/login`) || PathPrefix(`/header`) || PathPrefix(`/extractorapp`) || PathPrefix(`/geoserver`) || PathPrefix(`/console`) || PathPrefix(`/geonetwork`) || PathPrefix(`/analytics`) || PathPrefix(`/mapstore`) || PathPrefix(`/datafeeder`) || PathPrefix(`/import`))"
       # CORS related. Open everything to the world.
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
