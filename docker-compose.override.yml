@@ -54,7 +54,20 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.proxy.tls=true"
       - "traefik.http.routers.proxy.priority=100"
-      - "traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (PathPrefix(`/_static`) || PathPrefix(`/login`) || PathPrefix(`/header`) || PathPrefix(`/extractorapp`) || PathPrefix(`/geoserver`) || PathPrefix(`/console`) || PathPrefix(`/geonetwork`) || PathPrefix(`/analytics`) || PathPrefix(`/mapstore`) || PathPrefix(`/datafeeder`) || PathPrefix(`/import`))"
+      - >-
+        traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
+        PathPrefix(`/_static`)
+        || PathPrefix(`/login`)
+        || PathPrefix(`/header`)
+        || PathPrefix(`/extractorapp`)
+        || PathPrefix(`/geoserver`)
+        || PathPrefix(`/console`)
+        || PathPrefix(`/geonetwork`)
+        || PathPrefix(`/analytics`)
+        || PathPrefix(`/mapstore`)
+        || PathPrefix(`/datafeeder`)
+        || PathPrefix(`/import`)
+        )
       # CORS related. Open everything to the world.
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
