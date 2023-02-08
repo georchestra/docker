@@ -2,3 +2,7 @@
 	path = config
 	url = https://github.com/georchestra/datadir.git
 	branch = docker-master
+[submodule "resources/static"]
+	path = resources/static
+	url = https://github.com/georchestra/htdocs.git
+	branch = master
