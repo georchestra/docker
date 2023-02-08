@@ -68,6 +68,7 @@ services:
         || PathPrefix(`/datafeeder`)
         || PathPrefix(`/import`)
         )
+      - "traefik.http.services.proxy.loadbalancer.server.port=8080"
       # CORS related. Open everything to the world.
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
