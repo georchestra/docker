@@ -65,6 +65,7 @@ services:
         || PathPrefix(`/geonetwork`)
         || PathPrefix(`/analytics`)
         || PathPrefix(`/mapstore`)
+        || PathPrefix(`/datahub`)
         || PathPrefix(`/datafeeder`)
         || PathPrefix(`/import`)
         )
