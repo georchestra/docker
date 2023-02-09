@@ -42,7 +42,7 @@ docker compose up -d
 
 To stop geOrchestra:
 ```
-docker-compose down
+docker compose down
 ```
 
 **4. Play**
@@ -92,7 +92,7 @@ The `docker-compose.override.yml` file adds services to interact with your geOrc
 The base docker composition does not include any standalone geowebcache instance, nor the atlas module.
 If you need them, you have to include the corresponding complementary docker-compose file at run-time:
 ```
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.gwc.yml -f docker-compose.atlas.yml up
+docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.gwc.yml -f docker-compose.atlas.yml up
 ```
 
 ## Upgrading
