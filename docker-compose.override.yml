@@ -56,18 +56,18 @@ services:
       - "traefik.http.routers.proxy.priority=100"
       - >-
         traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        PathPrefix(`/_static`)
-        || PathPrefix(`/login`)
-        || PathPrefix(`/header`)
-        || PathPrefix(`/extractorapp`)
-        || PathPrefix(`/geoserver`)
-        || PathPrefix(`/console`)
-        || PathPrefix(`/geonetwork`)
-        || PathPrefix(`/analytics`)
-        || PathPrefix(`/mapstore`)
-        || PathPrefix(`/datahub`)
+        PathPrefix(`/analytics`)
         || PathPrefix(`/datafeeder`)
+        || PathPrefix(`/datahub`)
+        || PathPrefix(`/console`) 
+        || PathPrefix(`/extractorapp`)
+        || PathPrefix(`/geonetwork`)
+        || PathPrefix(`/geoserver`)
+        || PathPrefix(`/header`)
         || PathPrefix(`/import`)
+        || PathPrefix(`/login`)
+        || PathPrefix(`/mapstore`)
+        || PathPrefix(`/_static`)
         )
       # CORS related. Open everything to the world.
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
@@ -75,7 +75,11 @@ services:
       - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
       - "traefik.http.middlewares.corsheader.headers.addvaryheader=true"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
-      - "traefik.http.routers.proxy.middlewares=corsheader@docker"
+      - "traefik.http.routers.proxy.middlewares=corsheader@docker,static-errors-middleware@docker"
+      # handle downstream errors
+      - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
+      - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
+      - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
 
   cas:
     labels:
