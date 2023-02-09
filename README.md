@@ -6,13 +6,13 @@
 
 * RAM
 
-Grab a machine with a decent amount of RAM (at least 8Gb, better with 12 or 16Gb).
+Grab a machine with a decent amount of RAM (16Gb is mandatory to run the full composition, more is better).
 
 * Install Docker
 
-Note that docker-compose is not necessary now. 
+An up-to-date [docker](https://docs.docker.com/engine/installation/) engine is required.
 
-So, you will just need to install a recent [docker](https://docs.docker.com/engine/installation/) version (not from your distro, these packages are probably too old).
+Note that docker-compose is not necessary anymore. 
 
 **2. Download sources**
 
@@ -28,11 +28,11 @@ git checkout 22.0 && git submodule update
 
 **3. Run**
 
-Default compose file contain full geOrchestra modules.
+The default docker-compose file contains all geOrchestra modules.
 
-It's strongly recommended to check `docker-compose.yml` and `docker-compose.override.yml` first to comments useless modules (e.g geonetwork, extractor, whatever you don't need...).
+It's recommended to double-check the `docker-compose.yml` and `docker-compose.override.yml` files if you need to comment useless modules (e.g extractor, mapstore,... ).
 
-To run, just execute:
+To run:
 
 ```
 cd docker
@@ -40,7 +40,7 @@ docker compose up -d
 ```
 
 
-To stop geOrchestra, just execute:
+To stop geOrchestra:
 ```
 docker-compose down
 ```
@@ -144,13 +144,9 @@ to
 geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
 ```
 
-## GeoNetwork 4
+## Kibana
 
-The use of GeoNetwork 4 requires 2 extra services compared to GeoNetwork 3, as the indexes are no longer managed by GeoNetwork itself.
-
-### Kibana
-
-The `kibana` service is used for dashboarding purposes and is integrated to the GeoNetwork admin UI. See in the `Statistics & status / Content statistics` admin menu to access it.
+The optional `kibana` service is used for dashboarding purposes and is integrated to the GeoNetwork admin UI. See in the `Statistics & status / Content statistics` admin menu to access it.
 
 A specific configuration is provided in the `kibana/` subdirectory.
 
@@ -160,7 +156,7 @@ https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.0.6/e
 
 
 
-### Elasticsearch
+## Elasticsearch
 
 In the current state of the docker composition, no volume is defined, so do not expect persistence of the indexes.
 
