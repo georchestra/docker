@@ -111,7 +111,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:4.2.x-dev # FIXME (see https://github.com/georchestra/georchestra/issues/3891 )
     depends_on:
       - console
       - database
@@ -129,6 +129,15 @@ services:
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
+    restart: always
+
+  datahub:
+    image: geonetwork/geonetwork-ui-datahub:main-0497575d # FIXME: latest (see https://github.com/geonetwork/geonetwork-ui/issues/415 )
+    environment:
+      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
+      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
+    volumes:
+    - georchestra_datadir:/etc/georchestra
     restart: always
 
   analytics:
