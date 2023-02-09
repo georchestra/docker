@@ -57,18 +57,18 @@ services:
       - "traefik.http.routers.proxy.priority=2"
       - >-
         traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        PathPrefix(`/_static`) || 
-        PathPrefix(`/login`) || 
-        PathPrefix(`/header`) || 
-        PathPrefix(`/extractorapp`) || 
-        PathPrefix(`/geoserver`) || 
-        PathPrefix(`/console`) || 
-        PathPrefix(`/geonetwork`) || 
-        PathPrefix(`/analytics`) || 
-        PathPrefix(`/mapstore`) || 
-        PathPrefix(`/datahub`) ||
-        PathPrefix(`/datafeeder`) || 
-        PathPrefix(`/import`)
+        PathPrefix(`/analytics`)
+        || PathPrefix(`/datafeeder`)
+        || PathPrefix(`/datahub`)
+        || PathPrefix(`/console`) 
+        || PathPrefix(`/extractorapp`)
+        || PathPrefix(`/geonetwork`)
+        || PathPrefix(`/geoserver`)
+        || PathPrefix(`/header`)
+        || PathPrefix(`/import`)
+        || PathPrefix(`/login`)
+        || PathPrefix(`/mapstore`)
+        || PathPrefix(`/_static`)
         )
       - "traefik.http.services.proxy.loadbalancer.server.port=8080"
       # CORS related. Open everything to the world.
@@ -78,19 +78,24 @@ services:
       - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
       - "traefik.http.middlewares.corsheader.headers.addvaryheader=true"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.routers.proxy.middlewares=corsheader@docker,static-errors-middleware@docker"
+      # handle downstream errors
+      - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
+      - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
+      - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
       # Add trailing slash to well-known apps
       - "traefik.http.routers.traefik-redirect.tls=true"
       - >-
         traefik.http.routers.traefik-redirect.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        Path(`/header`) || 
-        Path(`/geoserver`) || 
-        Path(`/console`) || 
-        Path(`/geonetwork`) || 
-        Path(`/analytics`) || 
-        Path(`/mapstore`) || 
-        Path(`/datafeeder`) || 
-        Path(`/import`) || 
-        Path(`/datahub`)
+        Path(`/analytics`)
+        || PathPrefix(`/datafeeder`)
+        || PathPrefix(`/datahub`) 
+        || PathPrefix(`/console`) 
+        || PathPrefix(`/geonetwork`)
+        || PathPrefix(`/geoserver`)
+        || PathPrefix(`/header`)
+        || PathPrefix(`/import`)
+        || PathPrefix(`/mapstore`)
         )
       - "traefik.http.routers.traefik-redirect.priority=10"
       - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
