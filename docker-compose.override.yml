@@ -17,7 +17,7 @@ services:
       - ./resources/ssl:/etc/ssl/traefik
 
   georchestra-127-0-1-1.traefik.me:
-    image: traefik:2.4
+    image: traefik:2.9
     depends_on:
       - traefik-me-certificate-downloader
     ports:
@@ -34,8 +34,9 @@ services:
       - "traefik.http.routers.traefik.tls=true"
       - "traefik.http.routers.traefik.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=traefik-strip"
+      - "traefik.http.routers.traefik.middlewares=traefik-strip@docker"
       - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
+
 
   static:
     image: nginx:stable
@@ -53,7 +54,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.proxy.tls=true"
-      - "traefik.http.routers.proxy.priority=100"
+      - "traefik.http.routers.proxy.priority=2"
       - >-
         traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
         PathPrefix(`/analytics`)
@@ -69,7 +70,9 @@ services:
         || PathPrefix(`/mapstore`)
         || PathPrefix(`/_static`)
         )
+      - "traefik.http.services.proxy.loadbalancer.server.port=8080"
       # CORS related. Open everything to the world.
+      - "traefik.http.routers.proxy.middlewares=corsheader@docker"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
@@ -80,6 +83,25 @@ services:
       - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
       - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
       - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
+      # Add trailing slash to well-known apps
+      - "traefik.http.routers.traefik-redirect.tls=true"
+      - >-
+        traefik.http.routers.traefik-redirect.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
+        Path(`/analytics`)
+        || PathPrefix(`/datafeeder`)
+        || PathPrefix(`/datahub`) 
+        || PathPrefix(`/console`) 
+        || PathPrefix(`/geonetwork`)
+        || PathPrefix(`/geoserver`)
+        || PathPrefix(`/header`)
+        || PathPrefix(`/import`)
+        || PathPrefix(`/mapstore`)
+        )
+      - "traefik.http.routers.traefik-redirect.priority=10"
+      - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.regex=^https?://(.*)/(.+)"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=true"
 
   cas:
     labels:
