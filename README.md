@@ -192,28 +192,6 @@ You can now test modifications locally with the current FQDN (by default `georch
 
 **3. Debug**
 
-- Force traefik port
-
-You have to force traefik port.
-
-Open `docker/docker-compose.override.yml` file and complete `proxy` section to add this line :
-
-`"traefik.http.services.my-service.loadbalancer.server.port=8080"`
-
-Proxy section begin now with something like : 
-
-```
-  proxy:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.proxy.tls=true"
-      - "traefik.http.routers.proxy.priority=100"
-      - "traefik.http.services.my-service.loadbalancer.server.port=8080"
-      - >-
-```
-
-- Ports bindings
-
 Open `docker/docker-compose.yml` and identify `proxy` section.
 
 Change `proxy` section to insert some JAVA options and ports `5005` to get :
@@ -240,7 +218,3 @@ Apply Docker changes :
 `docker compose up -d`
 
 You can now attach IDE to debug the code tep by step on port `5005`.
-
-
-
-
