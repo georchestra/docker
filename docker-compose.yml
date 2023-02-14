@@ -137,7 +137,7 @@ services:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
     volumes:
-    - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     restart: always
 
   analytics:
