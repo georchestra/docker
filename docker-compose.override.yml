@@ -88,20 +88,20 @@ services:
       - >-
         traefik.http.routers.traefik-redirect.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
         Path(`/analytics`)
-        || PathPrefix(`/datafeeder`)
-        || PathPrefix(`/datahub`) 
-        || PathPrefix(`/console`) 
-        || PathPrefix(`/geonetwork`)
-        || PathPrefix(`/geoserver`)
-        || PathPrefix(`/header`)
-        || PathPrefix(`/import`)
-        || PathPrefix(`/mapstore`)
+        || Path(`/datafeeder`)
+        || Path(`/datahub`)
+        || Path(`/console`)
+        || Path(`/geonetwork`)
+        || Path(`/geoserver`)
+        || Path(`/header`)
+        || Path(`/import`)
+        || Path(`/mapstore`)
         )
       - "traefik.http.routers.traefik-redirect.priority=10"
       - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.regex=^https?://(.*)/(.+)"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=true"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
 
   cas:
     labels:
