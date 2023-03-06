@@ -111,7 +111,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:4.2.x-dev # FIXME (see https://github.com/georchestra/georchestra/issues/3891 )
+    image: georchestra/geonetwork:latest
     depends_on:
       - console
       - database
