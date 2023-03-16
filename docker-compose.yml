@@ -132,7 +132,7 @@ services:
     restart: always
 
   datahub:
-    image: geonetwork/geonetwork-ui-datahub:main-0497575d # FIXME: latest (see https://github.com/geonetwork/geonetwork-ui/issues/415 )
+    image: geonetwork/geonetwork-ui-datahub:latest
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
