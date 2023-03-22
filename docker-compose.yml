@@ -47,44 +47,6 @@ services:
       - ldap_config:/etc/ldap
     restart: always
 
-  proxy:
-    image: georchestra/security-proxy:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f localhost:8080/_static/bootstrap_3.0.0/css/bootstrap-theme.min.css >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-    volumes:
-      - ./config:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    restart: always
-
-  cas:
-    image: georchestra/cas:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f localhost:8080/cas/login >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      ldap:
-        condition: service_healthy
-    volumes:
-      - ./config:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    restart: always
-
   header:
     image: georchestra/header:latest
     healthcheck:
@@ -223,6 +185,15 @@ services:
       - mapstore_extensions:/mnt/mapstore_extensions
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
+
+  gateway:
+    image: georchestra/gateway:latest
+    depends_on:
+      - database
+    volumes:
+      - ./config:/etc/georchestra
+    environment:
+      - JAVA_OPTS=-Dgeorchestra.datadir=/etc/georchestra
 
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
