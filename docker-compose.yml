@@ -12,6 +12,7 @@ volumes:
   geonetwork_datadir:
   datafeeder_uploads:
   datafeeder_postgis_data:
+  esdata:
 
 secrets:
   slapd_password:
@@ -188,8 +189,15 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.9.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     environment:
       discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
 
   kibana:
     image: kibana:7.9.0
