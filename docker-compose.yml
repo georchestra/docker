@@ -303,3 +303,16 @@ services:
     volumes:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
 
+  ogc-api-records:
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
+    depends_on:
+      - elasticsearch
+      - database
+    environment:
+      LANG: en_US.UTF-8
+      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
+      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+      SPRING_PROFILES_ACTIVE: standalone
+    volumes:
+      - ./config:/etc/georchestra
+
