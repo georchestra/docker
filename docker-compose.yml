@@ -171,7 +171,7 @@ services:
       - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m
 
   import:
-    image: georchestra/datafeeder-frontend:21.0-SNAPSHOT
+    image: georchestra/datafeeder-frontend:22.0.x
     volumes:
       - ./config:/etc/georchestra
 
