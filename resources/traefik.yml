@@ -29,3 +29,5 @@ api:
 
 log:
   level: INFO
+
+ping: {}
