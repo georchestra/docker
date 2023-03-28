@@ -32,6 +32,9 @@ The default docker-compose file contains all geOrchestra modules.
 
 It's recommended to double-check the `docker-compose.yml` and `docker-compose.override.yml` files if you need to comment useless modules (e.g extractor, mapstore,... ).
 
+You need to use the new Compose plugin V2, `docker-compose` (V1) is not supported by default: [https://docs.docker.com/compose/install/linux/](https://docs.docker.com/compose/install/linux/).   
+If you still want to use the old `docker-compose` (V1), you need to remove all the parameters `depends_on` from the files `docker-compose.yml` and `docker-compose.override.yml`.
+
 To run:
 
 ```

@@ -19,7 +19,10 @@ services:
   georchestra-127-0-1-1.traefik.me:
     image: traefik:2.9
     depends_on:
-      - traefik-me-certificate-downloader
+      traefik-me-certificate-downloader:
+        condition: service_completed_successfully
+    healthcheck:
+      test: traefik healthcheck --ping
     ports:
       - "80:80"
       - "443:443"
