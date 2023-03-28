@@ -220,6 +220,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      ldap:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
       - mapstore_extensions:/mnt/mapstore_extensions
