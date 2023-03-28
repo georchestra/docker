@@ -48,9 +48,16 @@ services:
 
   proxy:
     image: georchestra/security-proxy:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/_static/bootstrap_3.0.0/css/bootstrap-theme.min.css >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - ldap
-      - database
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -61,8 +68,14 @@ services:
 
   cas:
     image: georchestra/cas:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/cas/login >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - ldap
+      ldap:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -73,6 +86,11 @@ services:
 
   header:
     image: georchestra/header:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/header/img/logo.png >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -83,8 +101,16 @@ services:
 
   geoserver:
     image: georchestra/geoserver:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - ldap
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
       - geoserver_datadir:/mnt/geoserver_datadir
@@ -99,9 +125,16 @@ services:
 
   console:
     image: georchestra/console:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/console/account/new >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - ldap
-      - database
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -112,6 +145,20 @@ services:
 
   geonetwork:
     image: georchestra/geonetwork:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      console:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     depends_on:
       - console
       - database
@@ -133,6 +180,11 @@ services:
 
   datahub:
     image: geonetwork/geonetwork-ui-datahub:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:80/datahub/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
@@ -142,8 +194,14 @@ services:
 
   analytics:
     image: georchestra/analytics:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/analytics/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
     environment:
@@ -154,8 +212,16 @@ services:
 
   mapstore:
     image: georchestra/mapstore:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      ldap:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
       - mapstore_extensions:/mnt/mapstore_extensions
@@ -165,6 +231,11 @@ services:
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
     image: postgis/postgis:13-3.1-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     environment:
       - POSTGRES_DB=datafeeder
       - POSTGRES_USER=georchestra
@@ -175,6 +246,16 @@ services:
 
   datafeeder:
     image: georchestra/datafeeder:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:8080/datafeeder >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      database:
+        condition: service_healthy
+      postgis:
+        condition: service_healthy
     volumes:
       - ./config:/etc/georchestra
       - datafeeder_uploads:/tmp/datafeeder
@@ -183,16 +264,29 @@ services:
 
   import:
     image: georchestra/datafeeder-frontend:latest
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:80/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     volumes:
       - ./config:/etc/georchestra
 
   elasticsearch:
     image: elasticsearch:7.9.0
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f localhost:9200/_cat/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     environment:
       discovery.type: single-node
 
   kibana:
     image: kibana:7.9.0
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     volumes:
