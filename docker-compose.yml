@@ -160,11 +160,6 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-    depends_on:
-      - console
-      - database
-      - kibana
-      - elasticsearch
     volumes:
       - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
