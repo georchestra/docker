@@ -292,6 +292,12 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     volumes:
