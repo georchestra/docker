@@ -304,10 +304,19 @@ services:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
 
   ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:latest
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
     depends_on:
-      - elasticsearch
-      - database
+      geonetwork:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/ >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     environment:
       LANG: en_US.UTF-8
       SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
