@@ -313,6 +313,7 @@ services:
       SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
       SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
       SPRING_PROFILES_ACTIVE: standalone
+      JAVA_OPTS: -Dfile.encoding=UTF-8
     volumes:
       - ./config:/etc/georchestra
 
