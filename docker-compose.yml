@@ -304,7 +304,7 @@ services:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
 
   ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
+    image: geonetwork/gn-cloud-ogc-api-records-service:latest
     depends_on:
       - elasticsearch
       - database
