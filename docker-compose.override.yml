@@ -72,6 +72,7 @@ services:
         || PathPrefix(`/login`)
         || PathPrefix(`/logout`)
         || PathPrefix(`/mapstore`)
+        || PathPrefix(`/ogc-api-records`)
         || PathPrefix(`/_static`)
         )
       - "traefik.http.services.proxy.loadbalancer.server.port=8080"
@@ -100,6 +101,7 @@ services:
         || Path(`/header`)
         || Path(`/import`)
         || Path(`/mapstore`)
+        || Path(`/ogc-api-records`)
         )
       - "traefik.http.routers.traefik-redirect.priority=10"
       - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
