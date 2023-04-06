@@ -156,10 +156,10 @@ services:
         condition: service_healthy
       database:
         condition: service_healthy
+      kibana:
+        condition: service_healthy
       elasticsearch:
         condition: service_healthy
-      kibana:
-        condition: service_started
     volumes:
       - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
