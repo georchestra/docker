@@ -271,7 +271,7 @@ services:
       - ./config:/etc/georchestra
 
   elasticsearch:
-    image: elasticsearch:7.15.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     ulimits:
       memlock:
         soft: -1
