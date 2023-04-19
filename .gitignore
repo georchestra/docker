@@ -8,6 +8,6 @@
 # ignore the .env file so we can specify environment variables that are
 # not pushed to github
 .env
-
+.envs-*
 # ignore the certs files automatically downloaded on docker-compose up
 resources/ssl/traefik.me*
