@@ -10,6 +10,9 @@ volumes:
 services:
   traefik-me-certificate-downloader:
     image: alpine
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
     command: sh -c "cd /etc/ssl/traefik
       && wget traefik.me/fullchain.pem -O traefik.me.crt
       && wget traefik.me/privkey.pem -O traefik.me-key.pem"

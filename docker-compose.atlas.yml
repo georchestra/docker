@@ -5,7 +5,7 @@ services:
   atlas:
     image: georchestra/atlas:latest
     volumes:
-      - ./config:/etc/georchestra
+      - georchestra_datadir:/etc/georchestra
     environment:
       - XMS=512M
       - XMX=2G
