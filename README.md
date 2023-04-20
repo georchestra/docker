@@ -109,9 +109,9 @@ To upgrade, we recommend you to:
 
 ## Customising
 
-This docker composition support environnement variable, if you need to customize something it might be in the different env var files.
+This docker composition supports environnement variables, if you need to customize something it might be in the different env var files.
 
-Here is the list this files:
+Here is the list of these files:
 - [.envs-common](.envs-common) 
 - [.envs-database-datafeeder](.envs-database-datafeeder)
 - [.envs-database-georchestra](.envs-database-georchestra)
@@ -120,7 +120,7 @@ Here is the list this files:
 
 If you add variable be careful because it might be added into the wrong/unwanted container.
 
-You can also add environnement variable directly into the docker-compose.yaml if needed.
+You can also add environnement variables directly into the docker-compose.yaml if needed.
 
 To check which container is including which envs file you can look at the docker-compose* files and search for the .envs-* filename wanted.
 
@@ -128,9 +128,9 @@ If you don't find the value in it, there is still a lot to
 adjust the configuration in the `config` folder according to your needs.
 Reading the [quick configuration guide](https://github.com/georchestra/datadir/blob/docker-master/README.md) might help !
 
-Also in production environnement don't forget to change le file contains into the [secret/](secrets/) folder as they are default password.
+Also in production environnement don't forget to change the file into the [secret/](secrets/) folder as they are default password.
 
-For [geoserver_privileged_user_passwd.txt](secrets/geoserver_privileged_user_passwd.txt) it need to be the same that in the datadir : https://github.com/georchestra/datadir#3-steps-editing
+For [geoserver_privileged_user_passwd.txt](secrets/geoserver_privileged_user_passwd.txt) it needs to be the same that in the datadir : https://github.com/georchestra/datadir#3-steps-editing
 
 Most changes will require a service restart, except maybe updating viewer contexts & addons (`F5` will do).
 
