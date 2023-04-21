@@ -118,7 +118,7 @@ Here is the list of these files:
 - [.envs-hosts](.envs-hosts)
 - [.envs-ldap](.envs-ldap)
 
-If you add variable be careful because it might be added into the wrong/unwanted container.
+If you add variables, be careful because it might be added into the wrong/unwanted container.
 
 You can also add environment variables directly into the docker-compose.yaml if needed.
 
