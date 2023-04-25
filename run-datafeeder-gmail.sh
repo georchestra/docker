@@ -17,6 +17,6 @@ fi
 files="-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.datafeeder.gmail.yml"
 
 echo "SMTP_PASSWORD found in .env, running"
-echo "docker-compose $files up -d"
+echo "docker compose $files up -d"
 
-docker-compose $files up -d
+docker compose $files up -d

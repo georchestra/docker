@@ -75,7 +75,7 @@ The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thank
 To change it:
  * Rename the traefik service in the `docker-compose.override.yml` file to match the new domain
  * Modify the three `traefik.http.routers.*.rule` in the `docker-compose.override.yml` file
- * Update the datadir in the config folder (hint: grep for `georchestra-127-0-1-1.traefik.me`)
+ * Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
  * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik-config.yml` file
 
 ## Notes
@@ -104,13 +104,33 @@ Images and configuration are updated regularly.
 
 To upgrade, we recommend you to:
  * update the configuration with `git submodule update`
- * update the software with `docker-compose pull`
+ * update the software with `docker compose pull`
 
 
 ## Customising
 
-Adjust the configuration in the `config` folder according to your needs.
+This docker composition supports environment variables, if you need to customize something it might be in the different environment variables files.
+
+Here is the list of these files:
+- [.envs-common](.envs-common) 
+- [.envs-database-datafeeder](.envs-database-datafeeder)
+- [.envs-database-georchestra](.envs-database-georchestra)
+- [.envs-hosts](.envs-hosts)
+- [.envs-ldap](.envs-ldap)
+
+If you add variables, be careful because it might be added into the wrong/unwanted container.
+
+You can also add environment variables directly into the docker-compose.yaml if needed.
+
+To check which container is including which envs file you can look at the docker-compose* files and search for the .envs-* filename wanted.
+
+If you don't find the value in it, there is still a lot to
+adjust the configuration in the `config` folder according to your needs.
 Reading the [quick configuration guide](https://github.com/georchestra/datadir/blob/docker-master/README.md) might help !
+
+Also in production environment don't forget to change the file into the [secret/](secrets/) folder as they are default password.
+
+For [geoserver_privileged_user_passwd.txt](secrets/geoserver_privileged_user_passwd.txt) it needs to be the same that in the datadir : https://github.com/georchestra/datadir#3-steps-editing
 
 Most changes will require a service restart, except maybe updating viewer contexts & addons (`F5` will do).
 
@@ -206,7 +226,7 @@ Change `proxy` section to insert some JAVA options and ports `5005` to get :
       - ldap
       - database
     volumes:
-      - ./config:/etc/georchestra
+      - georchestra_datadir:/etc/georchestra
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005
       - XMS=256M

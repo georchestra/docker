@@ -24,7 +24,7 @@ secrets:
 services:
   copy-datadir:
     image: alpine
-    command: sh -c "rm -r /etc/georchestra/* && cp -r -f -v /mnt/datadir/* /etc/georchestra/ && chmod 777 -R -v /etc/georchestra/" # "sleep 6000"
+    command: sh -c "rm -r /etc/georchestra/* ; cp -r -f -v /mnt/datadir/* /etc/georchestra/ ; chmod 777 -R -v /etc/georchestra/" # "sleep 6000"
     volumes:
       - ./config:/mnt/datadir
       - georchestra_datadir:/etc/georchestra
