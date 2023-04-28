@@ -56,13 +56,13 @@ services:
       - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
       - "traefik.http.routers.static.priority=1"
 
-  proxy:
+  gateway:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.proxy.tls=true"
-      - "traefik.http.routers.proxy.priority=2"
+      - "traefik.http.routers.gateway.tls=true"
+      - "traefik.http.routers.gateway.priority=2"
       - >-
-        traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
+        traefik.http.routers.gateway.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
         PathPrefix(`/analytics`)
         || PathPrefix(`/datafeeder`)
         || PathPrefix(`/datahub`)
@@ -80,15 +80,15 @@ services:
         || PathPrefix(`/whoami`)
         || Query(`login=`)
         )
-      - "traefik.http.services.proxy.loadbalancer.server.port=8080"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
       # CORS related. Open everything to the world.
-      - "traefik.http.routers.proxy.middlewares=corsheader@docker"
+      - "traefik.http.routers.gateway.middlewares=corsheader@docker"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
       - "traefik.http.middlewares.corsheader.headers.addvaryheader=true"
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
-      - "traefik.http.routers.proxy.middlewares=corsheader@docker,static-errors-middleware@docker"
+      - "traefik.http.routers.gateway.middlewares=corsheader@docker,static-errors-middleware@docker"
       # handle downstream errors
       - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
       - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
@@ -114,11 +114,6 @@ services:
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
 
-  cas:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cas.tls=true"
-      - "traefik.http.routers.cas.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/cas`)"
 
   smtp:
     image: camptocamp/smtp-sink:latest
