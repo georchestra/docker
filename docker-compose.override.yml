@@ -114,7 +114,12 @@ services:
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
 
-
+# uncomment for oauth 2.0
+#  cas:
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.cas.tls=true"
+#      - "traefik.http.routers.cas.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/cas`)"
   smtp:
     image: camptocamp/smtp-sink:latest
     volumes:
