@@ -23,7 +23,7 @@ git clone --recurse-submodules https://github.com/georchestra/docker.git
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 22.0 && git submodule update
+git checkout 23.0 && git submodule update
 ```
 
 **3. Run**
@@ -145,9 +145,9 @@ In case you have to build these images by yourself, please refer to the [docker 
 If you want to run the Geofence enabled GeoServer, make sure the correct docker image is being used in `docker-compose.yml`:
 
 ```
-image: georchestra/geoserver:22.0.x-geofence
+image: georchestra/geoserver:23.0.x-geofence
 ```
-(replace `22.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
+(replace `23.0.x-geofence` by the appropriate version - use `latest-geofence` on master).
 
 And change the `JAVA_OPTIONS` in the geoserver `environment` properties to indicate where the Geofence databaser configuration .properties file is:
 

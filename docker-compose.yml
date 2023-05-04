@@ -43,7 +43,7 @@ services:
       - georchestra_datadir:/etc/georchestra
 
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:23.0.x
     env_file:
       - .envs-database-georchestra
     depends_on:
@@ -54,7 +54,7 @@ services:
     restart: always
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:23.0.x
     depends_on:
       envsubst:
         condition: service_completed_successfully
@@ -79,7 +79,7 @@ services:
     restart: always
 
   proxy:
-    image: georchestra/security-proxy:latest
+    image: georchestra/security-proxy:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/_static/bootstrap_3.0.0/css/bootstrap-theme.min.css >/dev/null || exit 1"]
       interval: 30s
@@ -104,7 +104,7 @@ services:
     restart: always
 
   cas:
-    image: georchestra/cas:latest
+    image: georchestra/cas:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1"]
       interval: 30s
@@ -126,7 +126,7 @@ services:
     restart: always
 
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
       interval: 30s
@@ -146,7 +146,7 @@ services:
     restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1"]
       interval: 30s
@@ -175,7 +175,7 @@ services:
     restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
       interval: 30s
@@ -199,7 +199,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
       interval: 30s
@@ -227,7 +227,7 @@ services:
     restart: always
 
   datahub:
-    image: geonetwork/geonetwork-ui-datahub:latest
+    image: geonetwork/geonetwork-ui-datahub:main-421a7506
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1"]
       interval: 30s
@@ -244,7 +244,7 @@ services:
     restart: always
 
   analytics:
-    image: georchestra/analytics:latest
+    image: georchestra/analytics:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
       interval: 30s
@@ -264,7 +264,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:latest
+    image: georchestra/mapstore:23.0.0-georchestra
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
@@ -301,7 +301,7 @@ services:
     restart: always
 
   datafeeder:
-    image: georchestra/datafeeder:latest
+    image: georchestra/datafeeder:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
       interval: 30s
@@ -326,7 +326,7 @@ services:
       - .envs-database-datafeeder
 
   import:
-    image: georchestra/datafeeder-frontend:latest
+    image: georchestra/datafeeder-frontend:23.0.x
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
       interval: 30s
