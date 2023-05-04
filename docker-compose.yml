@@ -218,9 +218,6 @@ services:
       - georchestra_datadir:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
-      - DATA_DIR=/var/lib/geonetwork_data
-      - ES_PROTOCOL=http
-      - ES_PORT=9200
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
