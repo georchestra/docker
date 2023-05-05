@@ -104,7 +104,7 @@ services:
     restart: always
 
   cas:
-    image: georchestra/cas:23.0.x
+    image: georchestra/cas:23.0.0-georchestra
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1"]
       interval: 30s
@@ -264,7 +264,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:23.0.0-georchestra
+    image: georchestra/mapstore:2022.02.01-geOrchestra
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
