@@ -95,7 +95,6 @@ services:
       - .envs-hosts
       - .envs-database-georchestra
 
-
 # uncomment for oauth 2.0
 #  cas:
 #    image: georchestra/cas:latest
