@@ -110,8 +110,8 @@ services:
         )
       - "traefik.http.routers.traefik-redirect.priority=10"
       - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.regex=^https?://^[^?]+$/(.+)"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.regex=^https?://(.+)/([^?]+)(\\?.*)?"
+      - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/$${3}"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
 
 # uncomment for oauth 2.0
