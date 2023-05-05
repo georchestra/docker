@@ -93,6 +93,29 @@ services:
       - .envs-ldap
       - .envs-hosts
       - .envs-database-georchestra
+
+# uncomment for oauth 2.0
+#  cas:
+#    image: georchestra/cas:latest
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      ldap:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    environment:
+#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=1G
+#    env_file:
+#      - .envs-common
+#      - .envs-ldap
+#      - .envs-database-georchestra
+#    restart: always
   
   header:
     image: georchestra/header:latest
