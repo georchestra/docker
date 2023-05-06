@@ -329,8 +329,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    ports:
-      - "8080:80"
     depends_on:
       envsubst:
         condition: service_completed_successfully
