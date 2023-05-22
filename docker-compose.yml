@@ -359,7 +359,7 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
 
   kibana:
-    image: kibana:7.9.0
+    image: docker.elastic.co/kibana/kibana:7.15.1
     depends_on:
       elasticsearch:
         condition: service_healthy
