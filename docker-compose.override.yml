@@ -74,6 +74,7 @@ services:
         || PathPrefix(`/import`)
         || PathPrefix(`/login`)
         || PathPrefix(`/logout`)
+        || PathPrefix(`/oauth2`)
         || PathPrefix(`/mapstore`)
         || PathPrefix(`/ogc-api-records`)
         || PathPrefix(`/_static`)
