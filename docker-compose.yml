@@ -14,6 +14,8 @@ volumes:
   datafeeder_postgis_data:
   esdata:
   georchestra_datadir:
+  rabbitmq_data:
+    driver: local
 
 secrets:
   slapd_password:
@@ -390,3 +392,20 @@ services:
       JAVA_OPTS: -Dfile.encoding=UTF-8
     volumes:
       - georchestra_datadir:/etc/georchestra
+      
+  rabbitmq:
+    image: docker.io/bitnami/rabbitmq:3.12
+    ports:
+      - '4369:4369'
+      - '5551:5551'
+      - '5552:5552'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_LOGS=-
+      - RABBITMQ_PASSWORD=user
+      - RABBITMQ_USERNAME=bitnami
+    volumes:
+      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
