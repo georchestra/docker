@@ -197,6 +197,7 @@ services:
     env_file:
       - .envs-common
       - .envs-ldap
+      - .envs-rabbitmq
       - .envs-database-georchestra
     restart: always
 
