@@ -1,0 +1,4 @@
+#envs-rabbitmq
+RABBITMQHOST=rabbitmq
+RABBITMQUSER=user
+RABBITMQPASSWORD=bitnami
