@@ -15,7 +15,6 @@ volumes:
   esdata:
   georchestra_datadir:
   rabbitmq_data:
-    driver: local
 
 secrets:
   slapd_password:
