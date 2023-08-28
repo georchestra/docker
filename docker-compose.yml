@@ -198,6 +198,7 @@ services:
       - .envs-ldap
       - .envs-rabbitmq
       - .envs-database-georchestra
+      - .envs-hosts
     restart: always
 
   geonetwork:
