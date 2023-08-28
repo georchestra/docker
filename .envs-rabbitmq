@@ -1,4 +1,3 @@
-#envs-rabbitmq
-RABBITMQHOST=rabbitmq
-RABBITMQUSER=georchestra
-RABBITMQPASSWORD=georchestra
+# envs-rabbitmq
+RABBITMQ_USERNAME=georchestra
+RABBITMQ_PASSWORD=georchestra

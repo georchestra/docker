@@ -395,9 +395,10 @@ services:
       
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
+    env_file:
+      - .envs-hosts
+      - .envs-rabbitmq
     environment:
       - RABBITMQ_LOGS=-
-      - RABBITMQ_USERNAME=georchestra
-      - RABBITMQ_PASSWORD=georchestra
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
