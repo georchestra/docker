@@ -396,10 +396,16 @@ services:
       
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
-    env_file:
-      - .envs-hosts
-      - .envs-rabbitmq
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f --user georchestra:georchestra localhost:15672/api/health/checks/local-alarms >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     environment:
       - RABBITMQ_LOGS=-
+      - RABBITMQ_USERNAME=georchestra
+      - RABBITMQ_PASSWORD=georchestra
+    ports:
+      - '15672:15672'
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
