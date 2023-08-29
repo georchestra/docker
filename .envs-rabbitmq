@@ -1,0 +1,3 @@
+# envs-rabbitmq
+RABBITMQ_USERNAME=georchestra
+RABBITMQ_PASSWORD=georchestra
