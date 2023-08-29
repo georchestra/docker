@@ -403,6 +403,8 @@ services:
       interval: 60s
       timeout: 30s
       retries: 3
+    env_file:
+      - .envs-rabbitmq
     environment:
       - RABBITMQ_LOGS=-
     volumes:
