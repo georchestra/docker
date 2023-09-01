@@ -71,7 +71,7 @@ services:
       - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
       - RUN_AS_UID=0
       - RUN_AS_GID=0
-      - LDAPHOST=localhost
+      - LDAPHOST=localhost # needed for container to start correctly, DO NOT REMOVE
     env_file:
       - .envs-ldap
     volumes:
