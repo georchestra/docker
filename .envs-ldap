@@ -8,3 +8,5 @@ LDAPADMINPASSWORD=secret
 LDAPUSERSRDN=ou=users
 LDAPROLESRDN=ou=roles
 LDAPORGSRDN=ou=orgs
+# activate ldap password rotation from first start
+#SLAPD_PASSWORD_MGT_POLICY=rotation
