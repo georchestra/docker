@@ -1,5 +1,4 @@
 # envs-ldap
-LDAPHOST=ldap
 LDAPPORT=389
 LDAPSCHEME=ldap
 LDAPBASEDN=dc=georchestra,dc=org

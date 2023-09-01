@@ -71,7 +71,6 @@ services:
       - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
       - RUN_AS_UID=0
       - RUN_AS_GID=0
-      - LDAPHOST=localhost # needed for container to start correctly, DO NOT REMOVE
     env_file:
       - .envs-ldap
     volumes:
@@ -122,6 +121,7 @@ services:
       - XMX=1G
     env_file:
       - .envs-common
+      - .envs-hosts
       - .envs-ldap
       - .envs-database-georchestra
     restart: always
@@ -287,6 +287,7 @@ services:
       - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
     env_file:
       - .envs-ldap
+      - .envs-hosts
       - .envs-database-georchestra
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
