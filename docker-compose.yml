@@ -88,7 +88,7 @@ services:
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
-      - JAVA_OPTS=-Dgeorchestra.datadir=/etc/georchestra
+      - JAVA_TOOL_OPTIONS="-Dgeorchestra.datadir=/etc/georchestra -Dspring.config.location=${georchestra.datadir}/gateway/application.yaml -Dspring.profiles.active=docker"
     env_file:
       - .envs-common
       - .envs-ldap
