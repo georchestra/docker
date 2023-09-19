@@ -1,4 +1,5 @@
 # envs-rabbitmq
 RABBITMQ_USERNAME=georchestra
 RABBITMQ_PASSWORD=georchestra
-RABBITMQ_PORT=15672
+# Only apply to applications consuming rabbitmq, doesn't change the port rabbitmq server running in Docker.
+RABBITMQ_PORT=5672
