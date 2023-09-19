@@ -1,3 +1,4 @@
 # envs-rabbitmq
 RABBITMQ_USERNAME=georchestra
 RABBITMQ_PASSWORD=georchestra
+RABBITMQ_PORT=15672
