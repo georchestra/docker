@@ -75,6 +75,7 @@ services:
         || PathPrefix(`/login`)
         || PathPrefix(`/logout`)
         || PathPrefix(`/mapstore`)
+        || PathPrefix(`/whoami`)
         || PathPrefix(`/ogc-api-records`)
         || PathPrefix(`/_static`)
         || Query(`login=`)
@@ -105,6 +106,7 @@ services:
         || Path(`/header`)
         || Path(`/import`)
         || Path(`/mapstore`)
+        || Path(`/whoami`)
         || Path(`/ogc-api-records`)
         )
       - "traefik.http.routers.traefik-redirect.priority=10"
