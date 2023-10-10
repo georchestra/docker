@@ -76,6 +76,7 @@ services:
         || PathPrefix(`/logout`)
         || PathPrefix(`/mapstore`)
         || PathPrefix(`/whoami`)
+        || PathPrefix(`/metadata-editor`)
         || PathPrefix(`/ogc-api-records`)
         || PathPrefix(`/_static`)
         || Query(`login=`)

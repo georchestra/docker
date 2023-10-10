@@ -16,6 +16,7 @@ KB_PORT=5601
 ES_HOST=elasticsearch
 ES_PORT=9200
 RABBITMQ_HOST=rabbitmq
+METADATA_EDITOR_HOST=metadata-editor
 
 # needed for geonetwork entrypoint DO NOT REMOVE
 CONSOLE_URL=http://${CONSOLE_HOST}:8080

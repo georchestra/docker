@@ -248,6 +248,23 @@ services:
       - georchestra_datadir:/etc/georchestra
     restart: always
 
+  metadata-editor:
+    image: geonetwork/geonetwork-ui-metadata-editor:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:80/metadata-editor/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
+    environment:
+      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/assets
+      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/conf
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+    restart: always
+
   analytics:
     image: georchestra/analytics:latest
     healthcheck:
