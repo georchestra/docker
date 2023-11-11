@@ -244,6 +244,7 @@ services:
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datahub/scripts
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
