@@ -37,8 +37,9 @@ services:
         condition: service_completed_successfully
     environment:
       - DEBUG=yes
-      - SUBST_FILES=/etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+      - SUBST_FILES=/etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
     env_file:
+      - .envs-common
       - .envs-hosts
     volumes:
       - georchestra_datadir:/etc/georchestra
