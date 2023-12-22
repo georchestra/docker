@@ -342,6 +342,8 @@ services:
     depends_on:
       envsubst:
         condition: service_completed_successfully
+    environment:
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/ui-scripts
     volumes:
       - georchestra_datadir:/etc/georchestra
 
