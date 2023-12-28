@@ -290,6 +290,8 @@ services:
     env_file:
       - .envs-ldap
       - .envs-database-georchestra
+    restart: always
+
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
     image: postgis/postgis:13-3.1-alpine
@@ -331,6 +333,7 @@ services:
       - .envs-hosts
       - .envs-database-georchestra
       - .envs-database-datafeeder
+    restart: always
 
   import:
     image: georchestra/datafeeder-frontend:latest
@@ -346,6 +349,7 @@ services:
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts_frontend
     volumes:
       - georchestra_datadir:/etc/georchestra
+    restart: always
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
@@ -366,6 +370,7 @@ services:
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
+    restart: always
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.15.1
@@ -381,6 +386,7 @@ services:
       - .envs-hosts
     volumes:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    restart: always
 
   ogc-api-records:
     image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
@@ -399,6 +405,7 @@ services:
       JAVA_OPTS: -Dfile.encoding=UTF-8
     volumes:
       - georchestra_datadir:/etc/georchestra
+    restart: always
       
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
@@ -413,3 +420,4 @@ services:
       - RABBITMQ_LOGS=-
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+    restart: always
