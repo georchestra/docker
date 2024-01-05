@@ -14,7 +14,6 @@ volumes:
   datafeeder_postgis_data:
   esdata:
   georchestra_datadir:
-  rabbitmq_data:
 
 secrets:
   slapd_password:
@@ -188,8 +187,6 @@ services:
         condition: service_healthy
       database:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
@@ -199,7 +196,6 @@ services:
     env_file:
       - .envs-common
       - .envs-ldap
-      - .envs-rabbitmq
       - .envs-database-georchestra
       - .envs-hosts
     restart: always
@@ -406,18 +402,5 @@ services:
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
+
       
-  rabbitmq:
-    image: docker.io/bitnami/rabbitmq:3.12
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
-      interval: 60s
-      timeout: 30s
-      retries: 3
-    env_file:
-      - .envs-rabbitmq
-    environment:
-      - RABBITMQ_LOGS=-
-    volumes:
-      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
-    restart: always
