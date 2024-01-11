@@ -164,7 +164,6 @@ services:
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
       - geoserver_native_libs:/mnt/geoserver_native_libs
-      - ./config/geoserver/jetty-env.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/jetty-env.xml
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
