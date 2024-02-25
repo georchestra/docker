@@ -62,25 +62,7 @@ services:
       - "traefik.http.routers.gateway.tls=true"
       - "traefik.http.routers.gateway.priority=2"
       - >-
-        traefik.http.routers.gateway.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        PathPrefix(`/analytics`)
-        || PathPrefix(`/datafeeder`)
-        || PathPrefix(`/datahub`)
-        || PathPrefix(`/console`)
-        || PathPrefix(`/extractorapp`)
-        || PathPrefix(`/geonetwork`)
-        || PathPrefix(`/geoserver`)
-        || PathPrefix(`/header`)
-        || PathPrefix(`/import`)
-        || PathPrefix(`/login`)
-        || PathPrefix(`/logout`)
-        || PathPrefix(`/oauth2`)
-        || PathPrefix(`/mapstore`)
-        || PathPrefix(`/ogc-api-records`)
-        || PathPrefix(`/_static`)
-        || PathPrefix(`/whoami`)
-        || Query(`login=`)
-        )
+        traefik.http.routers.gateway.rule=Host(`georchestra-127-0-1-1.traefik.me`)
       - "traefik.http.services.gateway.loadbalancer.server.port=8080"
       # CORS related. Open everything to the world.
       - "traefik.http.routers.gateway.middlewares=corsheader@docker"
@@ -91,9 +73,9 @@ services:
       - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
       - "traefik.http.routers.gateway.middlewares=corsheader@docker,static-errors-middleware@docker"
       # handle downstream errors
-      - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
-      - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
-      - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
+      - "traefik.http.middlewares.static-errors-middleware.errors.status=400-599"
+      - "traefik.http.middlewares.static-errors-middleware.errors.service=gateway"
+      - "traefik.http.middlewares.static-errors-middleware.errors.query=/error/{status}"
       # Add trailing slash to well-known apps
       - "traefik.http.routers.traefik-redirect.tls=true"
       - >-
