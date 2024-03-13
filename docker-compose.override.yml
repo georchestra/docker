@@ -8,117 +8,56 @@ volumes:
   smtp_maildir:
 
 services:
-  traefik-me-certificate-downloader:
-    image: alpine
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    command: sh -c "cd /etc/ssl/traefik
-      && wget traefik.me/fullchain.pem -O traefik.me.crt
-      && wget traefik.me/privkey.pem -O traefik.me-key.pem"
-    volumes:
-      - ./resources/ssl:/etc/ssl/traefik
-
-  georchestra-127-0-1-1.traefik.me:
-    image: traefik:2.9
-    depends_on:
-      traefik-me-certificate-downloader:
-        condition: service_completed_successfully
-    healthcheck:
-      test: traefik healthcheck --ping
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:2.8-alpine
+    networks:
+      - caddy
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./resources/ssl:/etc/certs:ro
-      - ./resources/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./resources/traefik-config.yml:/etc/traefik/config.yml:ro
+      - ./resources/caddy:/data/caddy
     restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=traefik-strip@docker"
-      - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
-
 
   static:
     image: nginx:stable
     restart: unless-stopped
+    networks:
+      - caddy
     volumes:
       - ./resources/static:/usr/share/nginx/html:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.static.tls=true"
-      - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
-      - "traefik.http.routers.static.priority=1"
+      - "caddy=georchestra-127-0-1-1.traefik.me"
+      - "caddy.tls=internal"
+      - "caddy.handle=/public/*"
+      - "caddy.handle.0_reverse_proxy={{upstreams 80}}"
 
   proxy:
+    networks:
+      - caddy
+      - default
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.proxy.tls=true"
-      - "traefik.http.routers.proxy.priority=2"
-      - >-
-        traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        PathPrefix(`/analytics`)
-        || PathPrefix(`/datafeeder`)
-        || PathPrefix(`/datahub`)
-        || PathPrefix(`/console`)
-        || PathPrefix(`/extractorapp`)
-        || PathPrefix(`/geonetwork`)
-        || PathPrefix(`/geoserver`)
-        || PathPrefix(`/header`)
-        || PathPrefix(`/import`)
-        || PathPrefix(`/login`)
-        || PathPrefix(`/logout`)
-        || PathPrefix(`/mapstore`)
-        || PathPrefix(`/ogc-api-records`)
-        || PathPrefix(`/_static`)
-        || PathPrefix(`/whoami`)
-        || Query(`login=`)
-        )
-      - "traefik.http.services.proxy.loadbalancer.server.port=8080"
-      # CORS related. Open everything to the world.
-      - "traefik.http.routers.proxy.middlewares=corsheader@docker"
-      - "traefik.http.middlewares.corsheader.headers.accesscontrolallowmethods=GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH"
-      - "traefik.http.middlewares.corsheader.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.corsheader.headers.accesscontrolmaxage=1800"
-      - "traefik.http.middlewares.corsheader.headers.addvaryheader=true"
-      - "traefik.http.middlewares.corsheader.headers.accesscontrolallowcredentials=true"
-      - "traefik.http.routers.proxy.middlewares=corsheader@docker,static-errors-middleware@docker"
-      # handle downstream errors
-      - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
-      - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
-      - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
-      # Add trailing slash to well-known apps
-      - "traefik.http.routers.traefik-redirect.tls=true"
-      - >-
-        traefik.http.routers.traefik-redirect.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
-        Path(`/analytics`)
-        || Path(`/datafeeder`)
-        || Path(`/datahub`)
-        || Path(`/console`)
-        || Path(`/geonetwork`)
-        || Path(`/geoserver`)
-        || Path(`/header`)
-        || Path(`/import`)
-        || Path(`/mapstore`)
-        || Path(`/ogc-api-records`)
-        )
-      - "traefik.http.routers.traefik-redirect.priority=10"
-      - "traefik.http.routers.traefik-redirect.middlewares=add-trailing-slash@docker"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.regex=^https?://(.*)/(.+)"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/"
-      - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
+      - "caddy=georchestra-127-0-1-1.traefik.me"
+      - "caddy.tls=internal"
+      - "caddy.handle.reverse_proxy={{upstreams 8080}}"
+      - "caddy.handle.0_header=Access-Control-Allow-Origin *"
+      - "caddy.handle.1_header=Access-Control-Allow-Methods \"GET, POST, PUT, PATCH, DELETE, OPTIONS\""
+      - "caddy.handle.2_header=Access-Control-Max-Age 1800"
+      - "caddy.handle.3_header=Access-Control-Allow-Credentials: true"
+      - "caddy.@trailingslash=path_regexp reg_static ^/(\\w+)$"
+      - "caddy.redir=@trailingslash /{http.regexp.reg_static.1}/"
 
   cas:
+    networks:
+      - caddy
+      - default
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cas.tls=true"
-      - "traefik.http.routers.cas.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/cas`)"
+      - "caddy=georchestra-127-0-1-1.traefik.me"
+      - "caddy.tls=internal"
+      - "caddy.handle=/cas/*"
+      - "caddy.handle.0_reverse_proxy={{upstreams 8080}}"
 
   smtp:
     image: camptocamp/smtp-sink:latest
@@ -137,12 +76,16 @@ services:
     environment:
       - IMAP_HOSTNAME=courier-imap
       - SMTP_HOSTNAME=smtp-sink
+    networks:
+      - caddy
+      - default
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.webmail.tls=true"
-      - "traefik.http.routers.webmail.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/webmail`)"
+      - "caddy=georchestra-127-0-1-1.traefik.me"
+      - "caddy.tls=internal"
+      - "caddy.handle=/webmail/*"
+      - "caddy.handle.0_reverse_proxy={{upstreams 80}}"
     restart: always
 
   ssh:
@@ -152,3 +95,6 @@ services:
     volumes:
       - geoserver_geodata:/mnt/geoserver_geodata
     restart: always
+
+networks:
+  caddy:

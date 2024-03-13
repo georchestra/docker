@@ -10,4 +10,5 @@
 .env
 .envs-*
 # ignore the certs files automatically downloaded on docker-compose up
-resources/ssl/traefik.me*
+resources/caddy/*
+!resources/caddy/README.md
