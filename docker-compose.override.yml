@@ -55,6 +55,7 @@ services:
       - "traefik.http.routers.static.tls=true"
       - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
       - "traefik.http.routers.static.priority=1"
+      - "traefik.http.services.static.loadbalancer.server.port=80"
 
   proxy:
     labels:
@@ -91,7 +92,7 @@ services:
       - "traefik.http.routers.proxy.middlewares=corsheader@docker,static-errors-middleware@docker"
       # handle downstream errors
       - "traefik.http.middlewares.static-errors-middleware.errors.status=500-599"
-      - "traefik.http.middlewares.static-errors-middleware.errors.service=static-docker@docker"
+      - "traefik.http.middlewares.static-errors-middleware.errors.service=static@docker"
       - "traefik.http.middlewares.static-errors-middleware.errors.query=/errors/50x.html"
       # Add trailing slash to well-known apps
       - "traefik.http.routers.traefik-redirect.tls=true"
