@@ -19,8 +19,8 @@ services:
     volumes:
       - ./resources/ssl:/etc/ssl/traefik
 
-  georchestra-127-0-1-1.traefik.me:
-    image: traefik:2.9
+  traefik:
+    image: traefik:2.11
     depends_on:
       traefik-me-certificate-downloader:
         condition: service_completed_successfully
@@ -38,11 +38,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
+      - "traefik.http.routers.traefik.rule=Host(`${FQDN}`) && (PathPrefix(`/traefik`) || PathPrefix(`/api`))"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.middlewares=traefik-strip@docker"
       - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik"
-
 
   static:
     image: nginx:stable
@@ -53,7 +52,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.static.tls=true"
-      - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
+      - "traefik.http.routers.static.rule=Host(`${FQDN}`)"
       - "traefik.http.routers.static.priority=1"
 
   proxy:
@@ -62,7 +61,7 @@ services:
       - "traefik.http.routers.proxy.tls=true"
       - "traefik.http.routers.proxy.priority=2"
       - >-
-        traefik.http.routers.proxy.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
+        traefik.http.routers.proxy.rule=Host(`${FQDN}`) && (
         PathPrefix(`/analytics`)
         || PathPrefix(`/datafeeder`)
         || PathPrefix(`/datahub`)
@@ -96,7 +95,7 @@ services:
       # Add trailing slash to well-known apps
       - "traefik.http.routers.traefik-redirect.tls=true"
       - >-
-        traefik.http.routers.traefik-redirect.rule=Host(`georchestra-127-0-1-1.traefik.me`) && (
+        traefik.http.routers.traefik-redirect.rule=Host(`${FQDN}`) && (
         Path(`/analytics`)
         || Path(`/datafeeder`)
         || Path(`/datahub`)
@@ -118,7 +117,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cas.tls=true"
-      - "traefik.http.routers.cas.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/cas`)"
+      - "traefik.http.routers.cas.rule=Host(`${FQDN}`) && PathPrefix(`/cas`)"
 
   smtp:
     image: camptocamp/smtp-sink:latest
@@ -142,7 +141,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webmail.tls=true"
-      - "traefik.http.routers.webmail.rule=Host(`georchestra-127-0-1-1.traefik.me`) && PathPrefix(`/webmail`)"
+      - "traefik.http.routers.webmail.rule=Host(`${FQDN}`) && PathPrefix(`/webmail`)"
     restart: always
 
   ssh:
