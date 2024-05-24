@@ -50,7 +50,10 @@ docker compose down
 
 **4. Play**
 
-Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.
+Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser. Then:
+
+* Accept the security warning.
+* Or solve the security warning by [following this step](#locally-trust-the-tls-certificate-for-georchestra).
 
 To login, use these credentials:
  * `testuser` / `testuser`
@@ -68,17 +71,41 @@ Emails sent by the SDI (eg when users request a new password) will not be relaye
 These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (with login `smtp` and password `smtp`).
 
 
+## Locally trust the TLS certificate for geOrchestra
+### On Linux
+
+1. Download Caddy binary: `wget "https://caddyserver.com/api/download?os=linux&arch=amd64"`
+2. Make it executable: `chmod +x caddy`
+3. Trust the certificate using this command: `./caddy trust`.
+4. Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.  
+   If that doesn't work, try to restart your browser.
+
+### On Windows
+1. Download Caddy binary: https://caddyserver.com/download  
+   Click on Download button on the website.
+2. Open the Downloads folder using your file explorer and rename the file downloaded to `caddy`.
+3. Open the command prompt (cmd) and navigate to your Downloads folder.
+   `cd "C:\Users\%USERNAME%\Downloads"`
+3. Trust the certificate using this command: `caddy trust`.
+4. Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.  
+   If that doesn't work, try to restart your browser.
+
 ## About the domain name
 
 The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thanks to [traefik.me](https://traefik.me/) which provides wildcard DNS for any IP address.
 
 To change it:
- * Rename the traefik service in the `docker-compose.override.yml` file to match the new domain
- * Modify the three `traefik.http.routers.*.rule` in the `docker-compose.override.yml` file
- * Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
- * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik-config.yml` file
+
+1. Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
+2. Two options for the TLS/SSL certificate:
+    * If your web server exposed to the internet (most likely it is), remove `tls internal` line in the file `resources/caddy/etc/Caddyfile`.
+    * If it is not, put a valid TLS certificate and a private key in the `resources/ssl` folder and declare it in the file `resources/caddy/etc/Caddyfile`.
+3. Reload the docker composition: `docker compose up -d`.  
+   May need to restart Caddy later if you are just modifying the Caddyfile or some file resources: `docker compose restart caddy`.
 
 ## Notes
+
+Find the Caddy web server documentation here: https://caddyserver.com/docs/caddyfile/directives.
 
 These docker-compose files describe:
  * which images / webapps will run,

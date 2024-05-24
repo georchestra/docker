@@ -1,0 +1,55 @@
+(static_fileserver) {
+    root * /usr/share/caddy/static
+    file_server
+}
+
+{$FQDN} {
+    tls internal
+    # For using a custom certificate:
+    # tls /etc/certs/ca.pem /etc/certs/key.pem
+
+    @trailing-slash {
+        path_regexp reg_static ^/(\w+)$
+    }
+
+    @static-resources {
+        path /favicon.ico
+        path /crossdomain.xml
+        path /robots.txt
+    }
+
+    handle_errors {
+        @5xx `{err.status_code} >= 500 && {err.status_code} < 600`
+        handle @5xx {
+            import static_fileserver
+            rewrite * /errors/50x.html
+        }
+    }
+
+    handle @static-resources {
+        import static_fileserver
+    }
+
+    handle_path /public/* {
+        import static_fileserver
+    }
+
+    handle /cas/* {
+        reverse_proxy cas:8080
+    }
+
+    handle /webmail/* {
+        reverse_proxy webmail:80
+    }
+
+    handle {
+        reverse_proxy proxy:8080
+        header {
+            Access-Control-Allow-Origin *
+            Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+            Access-Control-Max-Age 1800
+            Access-Control-Allow-Credentials: true
+        }
+        redir @trailing-slash /{http.regexp.reg_static.1}/
+    }
+}

@@ -9,55 +9,26 @@ volumes:
 
 services:
   caddy:
-    image: lucaslorentz/caddy-docker-proxy:2.8-alpine
-    networks:
-      - caddy
+    image: caddy:2.8-alpine
     ports:
       - "80:80"
       - "443:443"
+      - "127.0.0.1:2019:2019"
+    environment:
+      - CADDY_ADMIN=0.0.0.0:2019
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./resources/caddy:/data/caddy
+      - ./resources/ssl:/etc/certs:ro
+      - ./resources/caddy/etc:/etc/caddy:ro
+      - ./resources/caddy/data:/data/caddy
+      - ./resources/static:/usr/share/caddy/static:ro
     restart: always
-
-  static:
-    image: nginx:stable
-    restart: unless-stopped
-    networks:
-      - caddy
-    volumes:
-      - ./resources/static:/usr/share/nginx/html:ro
-      - /etc/localtime:/etc/localtime:ro
-    labels:
-      - "caddy=georchestra-127-0-1-1.traefik.me"
-      - "caddy.tls=internal"
-      - "caddy.handle=/public/*"
-      - "caddy.handle.0_reverse_proxy={{upstreams 80}}"
-
-  proxy:
-    networks:
-      - caddy
-      - default
-    labels:
-      - "caddy=georchestra-127-0-1-1.traefik.me"
-      - "caddy.tls=internal"
-      - "caddy.handle.reverse_proxy={{upstreams 8080}}"
-      - "caddy.handle.0_header=Access-Control-Allow-Origin *"
-      - "caddy.handle.1_header=Access-Control-Allow-Methods \"GET, POST, PUT, PATCH, DELETE, OPTIONS\""
-      - "caddy.handle.2_header=Access-Control-Max-Age 1800"
-      - "caddy.handle.3_header=Access-Control-Allow-Credentials: true"
-      - "caddy.@trailingslash=path_regexp reg_static ^/(\\w+)$"
-      - "caddy.redir=@trailingslash /{http.regexp.reg_static.1}/"
-
-  cas:
-    networks:
-      - caddy
-      - default
-    labels:
-      - "caddy=georchestra-127-0-1-1.traefik.me"
-      - "caddy.tls=internal"
-      - "caddy.handle=/cas/*"
-      - "caddy.handle.0_reverse_proxy={{upstreams 8080}}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:2019/reverse_proxy/upstreams >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - .envs-common
 
   smtp:
     image: camptocamp/smtp-sink:latest
@@ -76,16 +47,8 @@ services:
     environment:
       - IMAP_HOSTNAME=courier-imap
       - SMTP_HOSTNAME=smtp-sink
-    networks:
-      - caddy
-      - default
     volumes:
       - smtp_maildir:/home/smtp/Maildir/
-    labels:
-      - "caddy=georchestra-127-0-1-1.traefik.me"
-      - "caddy.tls=internal"
-      - "caddy.handle=/webmail/*"
-      - "caddy.handle.0_reverse_proxy={{upstreams 80}}"
     restart: always
 
   ssh:
@@ -95,6 +58,3 @@ services:
     volumes:
       - geoserver_geodata:/mnt/geoserver_geodata
     restart: always
-
-networks:
-  caddy:
