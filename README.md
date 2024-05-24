@@ -73,9 +73,7 @@ These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (w
 The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thanks to [traefik.me](https://traefik.me/) which provides wildcard DNS for any IP address.
 
 To change it:
- * Rename the traefik service in the `docker-compose.override.yml` file to match the new domain
- * Modify the three `traefik.http.routers.*.rule` in the `docker-compose.override.yml` file
- * Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
+ * Update the FQDN variable in [.env](.env) file
  * Put a valid SSL certificate in the `resources/ssl` folder and declare it in the `resources/traefik-config.yml` file
 
 ## Notes
@@ -112,7 +110,7 @@ To upgrade, we recommend you to:
 This docker composition supports environment variables, if you need to customize something it might be in the different environment variables files.
 
 Here is the list of these files:
-- [.envs-common](.envs-common) 
+- [.env](.env)
 - [.envs-database-datafeeder](.envs-database-datafeeder)
 - [.envs-database-georchestra](.envs-database-georchestra)
 - [.envs-hosts](.envs-hosts)

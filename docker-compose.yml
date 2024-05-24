@@ -38,7 +38,7 @@ services:
       - DEBUG=yes
       - SUBST_FILES=/etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
     env_file:
-      - .envs-common
+      - .env
       - .envs-hosts
     volumes:
       - georchestra_datadir:/etc/georchestra
@@ -98,7 +98,7 @@ services:
       - XMS=256M
       - XMX=1G
     env_file:
-      - .envs-common
+      - .env
       - .envs-ldap
       - .envs-hosts
       - .envs-database-georchestra
@@ -121,7 +121,7 @@ services:
       - XMS=256M
       - XMX=1G
     env_file:
-      - .envs-common
+      - .env
       - .envs-ldap
       - .envs-database-georchestra
     restart: always
@@ -143,7 +143,7 @@ services:
       - XMS=256M
       - XMX=512M
     env_file:
-      - .envs-common
+      - .env
     restart: always
 
   geoserver:
@@ -193,7 +193,7 @@ services:
       - XMS=256M
       - XMX=1G
     env_file:
-      - .envs-common
+      - .env
       - .envs-ldap
       - .envs-database-georchestra
       - .envs-hosts
@@ -324,7 +324,7 @@ services:
       # You can set a higher loglevel this way: (ref. https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-levels)
       - LOGGING_LEVEL_ORG_GEORCHESTRA_DATAFEEDER=INFO
     env_file:
-      - .envs-common
+      - .env
       - .envs-hosts
       - .envs-database-georchestra
       - .envs-database-datafeeder
