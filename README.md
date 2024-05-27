@@ -74,7 +74,7 @@ These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (w
 ## Locally trust the TLS certificate for geOrchestra
 ### On Linux
 
-1. Download Caddy binary: `wget "https://caddyserver.com/api/download?os=linux&arch=amd64"`
+1. Download Caddy binary: `wget "https://caddyserver.com/api/download?os=linux&arch=amd64" -O caddy`
 2. Make it executable: `chmod +x caddy`
 3. Trust the certificate using this command: `./caddy trust`.
 4. Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.  
@@ -98,7 +98,7 @@ To change it:
 
 1. Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
 2. Two options for the TLS/SSL certificate:
-    * If your web server exposed to the internet (most likely it is), remove `tls internal` line in the file `resources/caddy/etc/Caddyfile`.
+    * If your web server is exposed to the internet (most likely it is), remove `tls internal` line in the file `resources/caddy/etc/Caddyfile`.
     * If it is not, put a valid TLS certificate and a private key in the `resources/ssl` folder and declare it in the file `resources/caddy/etc/Caddyfile`.
 3. Reload the docker composition: `docker compose up -d`.  
    May need to restart Caddy later if you are just modifying the Caddyfile or some file resources: `docker compose restart caddy`.
