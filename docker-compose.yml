@@ -402,4 +402,26 @@ services:
       - georchestra_datadir:/etc/georchestra
     restart: always
 
-      
+  data-api:
+    image: georchestra/data-api:latest
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/data/ogcapi >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+        SPRING_PROFILES_ACTIVE: postgis
+        LOGGING_LEVEL_COM_CAMPTOCAMP: DEBUG
+        LOGGING_LEVEL_ORG_GEOTOOLS: DEBUG
+        SERVER_SERVLET_CONTEXT_PATH: /data
+        POSTGRES_HOST: postgis
+        POSTGRES_PORT: 5432
+        POSTGRES_DB: datafeeder
+        POSTGRES_USER: georchestra
+        POSTGRES_PASSWORD: georchestra
+#        POSTGRES_SCHEMA: psc
+
+
