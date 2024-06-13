@@ -14,6 +14,7 @@ volumes:
   datafeeder_postgis_data:
   esdata:
   georchestra_datadir:
+  rabbitmq_data:
 
 secrets:
   slapd_password:
@@ -79,53 +80,43 @@ services:
       - ldap_config:/etc/ldap
     restart: always
 
-  proxy:
-    image: georchestra/security-proxy:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/_static/bootstrap_3.0.0/css/bootstrap-theme.min.css >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
+  gateway:
+    image: georchestra/gateway:latest
     depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
+      - database
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
+      - JAVA_TOOL_OPTIONS=-Dgeorchestra.datadir=/etc/georchestra
     env_file:
       - .envs-common
       - .envs-ldap
       - .envs-hosts
       - .envs-database-georchestra
-    restart: always
 
-  cas:
-    image: georchestra/cas:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      ldap:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-database-georchestra
-    restart: always
-
+# uncomment for oauth 2.0
+#  cas:
+#    image: georchestra/cas:latest
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      ldap:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    environment:
+#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=1G
+#    env_file:
+#      - .envs-common
+#      - .envs-ldap
+#      - .envs-database-georchestra
+#    restart: always
+  
   header:
     image: georchestra/header:latest
     healthcheck:
@@ -186,6 +177,8 @@ services:
         condition: service_healthy
       database:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
@@ -195,6 +188,7 @@ services:
     env_file:
       - .envs-common
       - .envs-ldap
+      - .envs-rabbitmq
       - .envs-database-georchestra
       - .envs-hosts
     restart: always
@@ -400,6 +394,21 @@ services:
       JAVA_OPTS: -Dfile.encoding=UTF-8
     volumes:
       - georchestra_datadir:/etc/georchestra
+    restart: always
+      
+  rabbitmq:
+    image: docker.io/bitnami/rabbitmq:3.12
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
+      interval: 60s
+      timeout: 30s
+      retries: 3
+    env_file:
+      - .envs-rabbitmq
+    environment:
+      - RABBITMQ_LOGS=-
+    volumes:
+      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
 
       
