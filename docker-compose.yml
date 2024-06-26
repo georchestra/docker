@@ -45,7 +45,7 @@ services:
       - georchestra_datadir:/etc/georchestra
 
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:24.0.x
     env_file:
       - .envs-database-georchestra
     depends_on:
@@ -56,7 +56,7 @@ services:
     restart: always
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:24.0.x
     depends_on:
       envsubst:
         condition: service_completed_successfully
@@ -81,7 +81,7 @@ services:
     restart: always
 
   gateway:
-    image: georchestra/gateway:latest
+    image: georchestra/gateway:24.0.x
     depends_on:
       - database
     volumes:
@@ -96,7 +96,7 @@ services:
 
 # uncomment for oauth 2.0
 #  cas:
-#    image: georchestra/cas:latest
+#    image: georchestra/cas:24.0.x
 #    healthcheck:
 #      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
 #      interval: 30s
@@ -116,9 +116,9 @@ services:
 #      - .envs-ldap
 #      - .envs-database-georchestra
 #    restart: always
-  
+
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
       interval: 30s
@@ -138,7 +138,7 @@ services:
     restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1"]
       interval: 30s
@@ -166,7 +166,7 @@ services:
     restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
       interval: 30s
@@ -194,7 +194,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
       interval: 30s
@@ -222,7 +222,7 @@ services:
     restart: always
 
   datahub:
-    image: geonetwork/geonetwork-ui-datahub:latest
+    image: geonetwork/geonetwork-ui-datahub:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1"]
       interval: 30s
@@ -240,7 +240,7 @@ services:
     restart: always
 
   analytics:
-    image: georchestra/analytics:latest
+    image: georchestra/analytics:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
       interval: 30s
@@ -260,7 +260,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:latest
+    image: georchestra/mapstore:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
@@ -299,7 +299,7 @@ services:
     restart: always
 
   datafeeder:
-    image: georchestra/datafeeder:latest
+    image: georchestra/datafeeder:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
       interval: 30s
@@ -325,7 +325,7 @@ services:
     restart: always
 
   import:
-    image: georchestra/datafeeder-frontend:latest
+    image: georchestra/datafeeder-frontend:24.0.x
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
       interval: 30s
@@ -341,7 +341,7 @@ services:
     restart: always
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.15
     ulimits:
       memlock:
         soft: -1
@@ -362,7 +362,7 @@ services:
     restart: always
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.1
+    image: docker.elastic.co/kibana/kibana:7.17.15
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -395,7 +395,7 @@ services:
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
-      
+
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
     healthcheck:
@@ -411,4 +411,4 @@ services:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
 
-      
+
