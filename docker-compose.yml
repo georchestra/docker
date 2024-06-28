@@ -81,7 +81,7 @@ services:
     restart: always
 
   gateway:
-    image: georchestra/gateway:24.0.x
+    image: georchestra/gateway:1.0.0
     depends_on:
       - database
     volumes:
@@ -222,7 +222,7 @@ services:
     restart: always
 
   datahub:
-    image: geonetwork/geonetwork-ui-datahub:24.0.x
+    image: geonetwork/geonetwork-ui-datahub:latest
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1"]
       interval: 30s
@@ -260,7 +260,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:24.0.x
+    image: georchestra/mapstore:2023.02.02-geOrchestra
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
@@ -362,7 +362,7 @@ services:
     restart: always
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.15
+    image: docker.elastic.co/kibana/kibana:7.17.21
     depends_on:
       elasticsearch:
         condition: service_healthy
