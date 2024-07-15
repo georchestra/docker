@@ -37,7 +37,7 @@ services:
         condition: service_completed_successfully
     environment:
       - DEBUG=yes
-      - SUBST_FILES=/etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+      - SUBST_FILES=/etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
     env_file:
       - .envs-common
       - .envs-hosts
@@ -237,26 +237,6 @@ services:
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datahub/scripts
     volumes:
       - georchestra_datadir:/etc/georchestra
-    restart: always
-
-  analytics:
-    image: georchestra/analytics:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    env_file:
-      - .envs-database-georchestra
     restart: always
 
   mapstore:
