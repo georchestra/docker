@@ -21,6 +21,8 @@ Clone this repo and its submodule using:
 git clone --recurse-submodules https://github.com/georchestra/docker.git
 ```
 
+Note: Do not clone to a different folder, keep the `docker` folder otherwise it won't work. [There is a pending issue about that here](https://github.com/georchestra/docker/issues/214).
+
 Choose which branch to run, eg for latest stable:
 ```
 git checkout 23.0 && git submodule update
