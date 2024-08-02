@@ -117,25 +117,26 @@ services:
 #      - .envs-database-georchestra
 #    restart: always
 
-  header:
-    image: georchestra/header:24.0.x
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=512M
-    env_file:
-      - .envs-common
-    restart: always
+# uncomment for legacy header https://hub.docker.com/r/georchestra/header
+#  header:
+#    image: georchestra/header:24.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      envsubst:
+#        condition: service_completed_successfully
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    environment:
+#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=512M
+#    env_file:
+#      - .envs-common
+#    restart: always
 
   geoserver:
     image: georchestra/geoserver:24.0.x
@@ -239,25 +240,26 @@ services:
       - georchestra_datadir:/etc/georchestra
     restart: always
 
-  analytics:
-    image: georchestra/analytics:24.0.x
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    env_file:
-      - .envs-database-georchestra
-    restart: always
+# uncomment for  enabling analytics, available only with security-proxy
+#  analytics:
+#    image: georchestra/analytics:24.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      database:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    environment:
+#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=1G
+#    env_file:
+#      - .envs-database-georchestra
+#    restart: always
 
   mapstore:
     image: georchestra/mapstore:2023.02.02-geOrchestra
@@ -378,7 +380,7 @@ services:
     restart: always
 
   ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.8-0
     depends_on:
       geonetwork:
         condition: service_healthy
