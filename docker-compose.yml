@@ -15,6 +15,9 @@ volumes:
   esdata:
   georchestra_datadir:
   rabbitmq_data:
+  geocontrib_db:
+  geocontrib_media:
+  geocontrib_static:
 
 secrets:
   slapd_password:
@@ -178,8 +181,8 @@ services:
         condition: service_healthy
       database:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
@@ -194,33 +197,33 @@ services:
       - .envs-hosts
     restart: always
 
-  geonetwork:
-    image: georchestra/geonetwork:24.0.x
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      console:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-      - geonetwork_datadir:/mnt/geonetwork_datadir
-    environment:
-      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=6G
-    env_file:
-      - .envs-hosts
-      - .envs-database-georchestra
-    restart: always
+#  geonetwork:
+#    image: georchestra/geonetwork:24.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      console:
+#        condition: service_healthy
+#      database:
+#        condition: service_healthy
+#      kibana:
+#        condition: service_healthy
+#      elasticsearch:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#      - geonetwork_datadir:/mnt/geonetwork_datadir
+#    environment:
+#      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=6G
+#    env_file:
+#      - .envs-hosts
+#      - .envs-database-georchestra
+#    restart: always
 
   datahub:
     image: geonetwork/geonetwork-ui-datahub:latest
@@ -261,156 +264,186 @@ services:
 #      - .envs-database-georchestra
 #    restart: always
 
-  mapstore:
-    image: georchestra/mapstore:2023.02.02-geOrchestra
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-      ldap:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-      - mapstore_extensions:/mnt/mapstore_extensions
-    environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
+#  mapstore:
+#    image: georchestra/mapstore:2023.02.02-geOrchestra
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      database:
+#        condition: service_healthy
+#      ldap:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#      - mapstore_extensions:/mnt/mapstore_extensions
+#    environment:
+#      - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
+#    env_file:
+#      - .envs-ldap
+#      - .envs-database-georchestra
+#    restart: always
+
+#  postgis:
+#    # used by datafeeder to ingest uploaded user datasets into
+#    image: postgis/postgis:13-3.1-alpine
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+#      interval: 10s
+#      timeout: 3s
+#      retries: 3
+#    depends_on:
+#      envsubst:
+#        condition: service_completed_successfully
+#    env_file:
+#      - .envs-database-datafeeder
+#    volumes:
+#      - datafeeder_postgis_data:/var/lib/postgresql/data
+#    restart: always
+
+#  datafeeder:
+#    image: georchestra/datafeeder:24.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      database:
+#        condition: service_healthy
+#      postgis:
+#        condition: service_healthy
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#      - datafeeder_uploads:/tmp/datafeeder
+#    environment:
+#      - JAVA_OPTS=-Xms512m -Xmx512m
+#      # You can set a higher loglevel this way: (ref. https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-levels)
+#      - LOGGING_LEVEL_ORG_GEORCHESTRA_DATAFEEDER=INFO
+#    env_file:
+#      - .envs-common
+#      - .envs-hosts
+#      - .envs-database-georchestra
+#      - .envs-database-datafeeder
+#    restart: always
+#
+#  import:
+#    image: georchestra/datafeeder-frontend:24.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      envsubst:
+#        condition: service_completed_successfully
+#    environment:
+#      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts_frontend
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    restart: always
+#
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.21
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - esdata:/usr/share/elasticsearch/data
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      envsubst:
+#        condition: service_completed_successfully
+#    environment:
+#      discovery.type: single-node
+#      ES_JAVA_OPTS: -Xms512m -Xmx512m
+#    restart: always
+
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:7.17.21
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    env_file:
+#      - .envs-hosts
+#    volumes:
+#      - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    restart: always
+
+#  ogc-api-records:
+#    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.8-0
+#    depends_on:
+#      geonetwork:
+#        condition: service_healthy
+#      database:
+#        condition: service_healthy
+#      elasticsearch:
+#        condition: service_healthy
+#    environment:
+#      LANG: en_US.UTF-8
+#      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
+#      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+#      SPRING_PROFILES_ACTIVE: standalone
+#      JAVA_OPTS: -Dfile.encoding=UTF-8
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    restart: always
+
+#  rabbitmq:
+#    image: docker.io/bitnami/rabbitmq:3.12
+#    healthcheck:
+#      test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
+#      interval: 60s
+#      timeout: 30s
+#      retries: 3
+#    env_file:
+#      - .envs-rabbitmq
+#    environment:
+#      - RABBITMQ_LOGS=-
+#    volumes:
+#      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+#    restart: always
+
+
+  geocontrib-front:
+    image: neogeo/geocontrib-front:testing
     env_file:
-      - .envs-ldap
-      - .envs-database-georchestra
-    restart: always
+      - .envs-geocontrib
+    volumes:
+      - ./config/geocontrib:/opt/geocontrib/config
+      - geocontrib_media:/opt/geocontrib/media
+      - geocontrib_static:/opt/geocontrib/static
+    ports:
+        - "8888:80"
 
-  postgis:
-    # used by datafeeder to ingest uploaded user datasets into
-    image: postgis/postgis:13-3.1-alpine
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
+  geocontrib:
+    image: neogeo/geocontrib:6.2.0
     env_file:
-      - .envs-database-datafeeder
+      - .envs-geocontrib
     volumes:
-      - datafeeder_postgis_data:/var/lib/postgresql/data
-    restart: always
+      - geocontrib_media:/home/apprunner/geocontrib_app/media
+      - geocontrib_static:/home/apprunner/geocontrib_app/static
 
-  datafeeder:
-    image: georchestra/datafeeder:24.0.x
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-      postgis:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-      - datafeeder_uploads:/tmp/datafeeder
+
+  geocontrib-db:
+    restart: always
+    image: postgis/postgis:11-2.5-alpine
     environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m
-      # You can set a higher loglevel this way: (ref. https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-levels)
-      - LOGGING_LEVEL_ORG_GEORCHESTRA_DATAFEEDER=INFO
-    env_file:
-      - .envs-common
-      - .envs-hosts
-      - .envs-database-georchestra
-      - .envs-database-datafeeder
-    restart: always
+      - POSTGRES_USER=geocontrib
+      - POSTGRES_PASSWORD=geocontrib
+      - POSTGRES_DB=geocontrib
 
-  import:
-    image: georchestra/datafeeder-frontend:24.0.x
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    environment:
-      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts_frontend
     volumes:
-      - georchestra_datadir:/etc/georchestra
-    restart: always
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.21
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    environment:
-      discovery.type: single-node
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-    restart: always
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.21
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    env_file:
-      - .envs-hosts
-    volumes:
-      - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    restart: always
-
-  ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.8-0
-    depends_on:
-      geonetwork:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    environment:
-      LANG: en_US.UTF-8
-      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
-      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
-      SPRING_PROFILES_ACTIVE: standalone
-      JAVA_OPTS: -Dfile.encoding=UTF-8
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    restart: always
-
-  rabbitmq:
-    image: docker.io/bitnami/rabbitmq:3.12
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
-      interval: 60s
-      timeout: 30s
-      retries: 3
-    env_file:
-      - .envs-rabbitmq
-    environment:
-      - RABBITMQ_LOGS=-
-    volumes:
-      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
-    restart: always
-
-
+      - geocontrib_db:/var/lib/postgresql/data/
