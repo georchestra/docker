@@ -81,7 +81,7 @@ services:
     restart: always
 
   gateway:
-    image: georchestra/gateway:1.0.0
+    image: georchestra/gateway:1.1.x
     depends_on:
       - database
     volumes:
@@ -337,7 +337,7 @@ services:
       envsubst:
         condition: service_completed_successfully
     environment:
-      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts_frontend
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts/import
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
