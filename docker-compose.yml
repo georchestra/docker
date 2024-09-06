@@ -335,7 +335,7 @@ services:
       envsubst:
         condition: service_completed_successfully
     environment:
-      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts_frontend
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts/import
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
