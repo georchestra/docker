@@ -43,7 +43,7 @@
     }
 
     handle {
-        reverse_proxy proxy:8080
+        reverse_proxy gateway:8080
         header {
             Access-Control-Allow-Origin *
             Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
