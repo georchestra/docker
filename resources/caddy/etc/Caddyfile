@@ -30,10 +30,9 @@
         import static_fileserver
     }
 
-    # Uncomment if using CAS
-    # handle /cas/* {
-    #     reverse_proxy cas:8080
-    # }
+    handle /cas/* {
+        reverse_proxy cas:8080
+    }
 
     handle /webmail/* {
         reverse_proxy webmail:80
