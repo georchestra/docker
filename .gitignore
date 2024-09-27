@@ -12,4 +12,5 @@
 # ignore the certs files and Caddy data directory
 resources/ssl/*
 resources/caddy/data/*
+# remove possible caddy binary downloaded
 /caddy

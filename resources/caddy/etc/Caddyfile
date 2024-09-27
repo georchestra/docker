@@ -39,6 +39,7 @@
         reverse_proxy webmail:80
     }
 
+    # To be removed once import container support automatic redirection.
     handle /import {
         redir /import /import/
     }
