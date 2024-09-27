@@ -56,6 +56,7 @@ services:
       - "traefik.http.routers.static.rule=Host(`georchestra-127-0-1-1.traefik.me`)"
       - "traefik.http.routers.static.priority=1"
 
+  # modify from gateway to proxy if security-proxy is enabled
   gateway:
     labels:
       - "traefik.enable=true"
@@ -115,7 +116,7 @@ services:
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.replacement=https://$${1}/$${2}/$${3}"
       - "traefik.http.middlewares.add-trailing-slash.redirectregex.permanent=false"
 
-# uncomment for oauth 2.0
+# uncomment for oauth 2.0 and security-proxy
 #  cas:
 #    labels:
 #      - "traefik.enable=true"
