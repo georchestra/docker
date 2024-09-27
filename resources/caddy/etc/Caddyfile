@@ -8,10 +8,6 @@
     # For using a custom certificate:
     # tls /etc/certs/ca.pem /etc/certs/key.pem
 
-    @trailing-slash {
-        path_regexp reg_static ^/(\w+)$
-    }
-
     @static-resources {
         path /favicon.ico
         path /crossdomain.xml
@@ -34,12 +30,17 @@
         import static_fileserver
     }
 
-    handle /cas/* {
-        reverse_proxy cas:8080
-    }
+    # Uncomment if using CAS
+    # handle /cas/* {
+    #     reverse_proxy cas:8080
+    # }
 
     handle /webmail/* {
         reverse_proxy webmail:80
+    }
+
+    handle /import {
+        redir /import /import/
     }
 
     handle {
@@ -50,6 +51,5 @@
             Access-Control-Max-Age 1800
             Access-Control-Allow-Credentials: true
         }
-        redir @trailing-slash /{http.regexp.reg_static.1}/
     }
 }
