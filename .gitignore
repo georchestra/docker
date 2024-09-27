@@ -9,5 +9,8 @@
 # not pushed to github
 .env
 .envs-*
-# ignore the certs files automatically downloaded on docker-compose up
-resources/ssl/traefik.me*
+# ignore the certs files and Caddy data directory
+resources/ssl/*
+resources/caddy/data/*
+# ignore possible caddy binary downloaded
+/caddy
