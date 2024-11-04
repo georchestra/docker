@@ -20,5 +20,5 @@ services:
   sendmail:
     image: pigeosolutions/sendmail:20210906-1657-6e05771
     environment:
-      HOSTNAME: georchestra-127-0-1-1.traefik.me
+      HOSTNAME: georchestra-127-0-0-1.nip.io
     restart: always

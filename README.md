@@ -50,7 +50,7 @@ docker compose down
 
 **4. Play**
 
-Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser. Then:
+Open [https://georchestra-127-0-0-1.nip.io/](https://georchestra-127-0-0-1.nip.io/) in your browser. Then:
 
 * Accept the security warning.
 * Or solve the security warning by [following this step](#locally-trust-the-tls-certificate-for-georchestra).
@@ -61,14 +61,14 @@ To login, use these credentials:
 
 To upload data into the GeoServer data volume (`geoserver_geodata`), use `rsync`:
 ```
-rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra-127-0-1-1.traefik.me:/mnt/geoserver_geodata/
+rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra-127-0-0-1.nip.io:/mnt/geoserver_geodata/
 ```
 (password is: `geoserver`)
 
 Files uploaded into this volume will also be available to the geoserver instance in `/mnt/geoserver_geodata/`.
 
 Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.  
-These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (with login `smtp` and password `smtp`).
+These emails can be read on https://georchestra-127-0-0-1.nip.io/webmail/ (with login `smtp` and password `smtp`).
 
 
 ## Locally trust the TLS certificate for geOrchestra
@@ -77,7 +77,7 @@ These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (w
 1. Download Caddy binary: `wget "https://caddyserver.com/api/download?os=linux&arch=amd64" -O caddy`
 2. Make it executable: `chmod +x caddy`
 3. Trust the certificate using this command: `./caddy trust`.
-4. Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.  
+4. Open [https://georchestra-127-0-0-1.nip.io/](https://georchestra-127-0-0-1.nip.io/) in your browser.  
    If that doesn't work, try to restart your browser.
 
 ### On Windows
@@ -87,16 +87,16 @@ These emails can be read on https://georchestra-127-0-1-1.traefik.me/webmail/ (w
 3. Open the command prompt (cmd) and navigate to your Downloads folder.
    `cd "C:\Users\%USERNAME%\Downloads"`
 3. Trust the certificate using this command: `caddy trust`.
-4. Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.  
+4. Open [https://georchestra-127-0-0-1.nip.io/](https://georchestra-127-0-0-1.nip.io/) in your browser.  
    If that doesn't work, try to restart your browser.
 
 ## About the domain name
 
-The current FQDN `georchestra-127-0-1-1.traefik.me` resolves to 127.0.1.1, thanks to [traefik.me](https://traefik.me/) which provides wildcard DNS for any IP address.
+The current FQDN `georchestra-127-0-0-1.nip.io` resolves to 127.0.1.1, thanks to [traefik.me](https://traefik.me/) which provides wildcard DNS for any IP address.
 
 To change it:
 
-1. Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-1-1.traefik.me`)
+1. Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-0-1.nip.io`)
 2. Two options for the TLS/SSL certificate:
     * If your web server is exposed to the internet (most likely it is), remove `tls internal` line in the file `resources/caddy/etc/Caddyfile`.
     * If it is not, put a valid TLS certificate and a private key in the `resources/ssl` folder and declare it in the file `resources/caddy/etc/Caddyfile`.
@@ -238,7 +238,7 @@ In /docker :
 
 `docker compose up -d`
 
-You can now test modifications locally with the current FQDN (by default `georchestra-127-0-1-1.traefik.me`).
+You can now test modifications locally with the current FQDN (by default `georchestra-127-0-0-1.nip.io`).
 
 **3. Debug**
 
