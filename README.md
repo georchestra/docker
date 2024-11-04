@@ -72,13 +72,16 @@ These emails can be read on https://georchestra-127-0-0-1.nip.io/webmail/ (with 
 
 
 ## Locally trust the TLS certificate for geOrchestra
+
+Note: If you don't use the docker composition for geOrchestra for a few days, we recommend to "untrust" the certificate due to security because the certificate installed will work on all the domains.
+
 ### On Linux
 
 1. Download Caddy binary: `wget "https://caddyserver.com/api/download?os=linux&arch=amd64" -O caddy`
 2. Make it executable: `chmod +x caddy`
 3. Trust the certificate using this command: `./caddy trust`.
 4. Open [https://georchestra-127-0-0-1.nip.io/](https://georchestra-127-0-0-1.nip.io/) in your browser.  
-   If that doesn't work, try to restart your browser.
+   If that doesn't work, try to restart your browser. Make sure to be running a browser not installed through snap.
 
 ### On Windows
 1. Download Caddy binary: https://caddyserver.com/download  
