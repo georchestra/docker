@@ -82,6 +82,7 @@ services:
 
   gateway:
     image: georchestra/gateway:latest
+    scale: 1 # set to 0 if using security-proxy
     depends_on:
       - database
     volumes:
@@ -94,28 +95,28 @@ services:
       - .envs-hosts
       - .envs-database-georchestra
 
-# uncomment for oauth 2.0
-#  cas:
-#    image: georchestra/cas:latest
-#    healthcheck:
-#      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 10
-#    depends_on:
-#      ldap:
-#        condition: service_healthy
-#    volumes:
-#      - georchestra_datadir:/etc/georchestra
-#    environment:
-#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-#      - XMS=256M
-#      - XMX=1G
-#    env_file:
-#      - .envs-common
-#      - .envs-ldap
-#      - .envs-database-georchestra
-#    restart: always
+  cas:
+    image: georchestra/cas:latest
+    scale: 0 # set to 1 if need for oauth 2.0 and security-proxy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      ldap:
+        condition: service_healthy
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=1G
+    env_file:
+      - .envs-common
+      - .envs-ldap
+      - .envs-database-georchestra
+    restart: always
   
   header:
     image: georchestra/header:latest
@@ -241,6 +242,7 @@ services:
 
   analytics:
     image: georchestra/analytics:latest
+    scale: 0 # set to 1 if security proxy is activated
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
       interval: 30s
@@ -398,11 +400,12 @@ services:
       
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
+    scale: 0 # set to 1 if need rabbitmq
     healthcheck:
-      test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
-      interval: 60s
+      test: rabbitmq-diagnostics -q ping
+      interval: 15s
       timeout: 30s
-      retries: 3
+      retries: 6
     env_file:
       - .envs-rabbitmq
     environment:
@@ -410,5 +413,29 @@ services:
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
-
-      
+  
+  proxy:
+    image: georchestra/security-proxy:latest
+    scale: 0 #set to 1 if need security-proxy but set 0 gateway service
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/_static/bootstrap_3.0.0/css/bootstrap-theme.min.css >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=1G
+    env_file:
+      - .envs-common
+      - .envs-ldap
+      - .envs-hosts
+      - .envs-database-georchestra
+    restart: always

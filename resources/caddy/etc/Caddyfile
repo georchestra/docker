@@ -44,6 +44,7 @@
     }
 
     handle {
+        # modify from gateway to proxy if security-proxy is enabled
         reverse_proxy gateway:8080
         header {
             Access-Control-Allow-Origin *
