@@ -81,7 +81,7 @@ Note: If you don't use the docker composition for geOrchestra for a few days, we
 2. Make it executable: `chmod +x caddy`
 3. Trust the certificate using this command: `./caddy trust`.
 4. Open [https://georchestra-127-0-0-1.nip.io/](https://georchestra-127-0-0-1.nip.io/) in your browser.  
-   If that doesn't work, try to restart your browser. ⚠ Make sure to be running a browser not installed through snap.
+   If that doesn't work, try to restart your browser. :warning: Make sure to be running a browser not installed through snap.
 
 ### On Windows
 1. Download Caddy binary: https://caddyserver.com/download  
