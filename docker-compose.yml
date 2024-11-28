@@ -329,7 +329,7 @@ services:
   import:
     image: georchestra/datafeeder-frontend:24.0.x
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -s -f http://localhost:80/ >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
