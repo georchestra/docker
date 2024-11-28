@@ -409,6 +409,7 @@ services:
       - .envs-rabbitmq
     environment:
       - RABBITMQ_LOGS=-
+      - RABBITMQ_DISK_FREE_ABSOLUTE_LIMIT=1GB
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
