@@ -327,7 +327,7 @@ services:
   import:
     image: georchestra/datafeeder-frontend:latest
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:80/ >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -407,6 +407,7 @@ services:
       - .envs-rabbitmq
     environment:
       - RABBITMQ_LOGS=-
+      - RABBITMQ_DISK_FREE_ABSOLUTE_LIMIT=1GB
     volumes:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
