@@ -45,7 +45,7 @@ services:
       - georchestra_datadir:/etc/georchestra
 
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:25.0.x
     env_file:
       - .envs-database-georchestra
     depends_on:
@@ -56,7 +56,7 @@ services:
     restart: always
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:25.0.x
     depends_on:
       envsubst:
         condition: service_completed_successfully
@@ -81,7 +81,7 @@ services:
     restart: always
 
   gateway:
-    image: georchestra/gateway:latest
+    image: georchestra/gateway:1.1.x
     depends_on:
       - database
     volumes:
@@ -117,28 +117,28 @@ services:
 #      - .envs-database-georchestra
 #    restart: always
   
-  header:
-    image: georchestra/header:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=512M
-    env_file:
-      - .envs-common
-    restart: always
+#  header:
+#    image: georchestra/header:25.0.x
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 10
+#    depends_on:
+#      envsubst:
+#        condition: service_completed_successfully
+#    volumes:
+#      - georchestra_datadir:/etc/georchestra
+#    environment:
+#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+#      - XMS=256M
+#      - XMX=512M
+#    env_file:
+#      - .envs-common
+#    restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:25.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1"]
       interval: 30s
@@ -166,7 +166,7 @@ services:
     restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:25.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
       interval: 30s
@@ -194,7 +194,7 @@ services:
     restart: always
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:25.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
       interval: 30s
@@ -260,7 +260,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:latest
+    image: georchestra/mapstore:2024.02.00-RC1-geOrchestra
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
@@ -299,7 +299,7 @@ services:
     restart: always
 
   datafeeder:
-    image: georchestra/datafeeder:latest
+    image: georchestra/datafeeder:25.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
       interval: 30s
@@ -325,7 +325,7 @@ services:
     restart: always
 
   import:
-    image: georchestra/datafeeder-frontend:latest
+    image: georchestra/datafeeder-frontend:25.0.x
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:80/ >/dev/null || exit 1"]
       interval: 30s
@@ -378,7 +378,7 @@ services:
     restart: always
 
   ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.4.6-1
     depends_on:
       geonetwork:
         condition: service_healthy
