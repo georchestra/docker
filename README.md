@@ -23,7 +23,7 @@ git clone --recurse-submodules https://github.com/georchestra/docker.git
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 24.0 && git submodule update
+git checkout 25.0 && git submodule update
 ```
 
 **3. Run**
