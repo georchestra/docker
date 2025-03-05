@@ -1,5 +1,8 @@
 version: "3.1"
 
+include:
+  - docker-compose.data-api.yml
+
 volumes:
   postgresql_data:
   ldap_data:
