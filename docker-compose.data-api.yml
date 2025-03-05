@@ -1,0 +1,26 @@
+version: "3.1"
+
+services:
+  data-api:
+    image: georchestra/data-api:1.3.0
+    #    healthcheck:
+    #      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/data/ogcapi >/dev/null || exit 1" ]
+    #      interval: 30s
+    #      timeout: 10s
+    #      retries: 10
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+    environment:
+      SPRING_PROFILES_ACTIVE: postgis
+      LOGGING_LEVEL_COM_CAMPTOCAMP: DEBUG
+      LOGGING_LEVEL_ORG_GEOTOOLS: DEBUG
+      SERVER_SERVLET_CONTEXT_PATH: /data
+      POSTGRES_HOST: postgis
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: datafeeder
+      POSTGRES_USER: georchestra
+      POSTGRES_PASSWORD: georchestra
+      JAVA_TOOL_OPTIONS: "-Ddataapi.configdir=/etc/georchestra"

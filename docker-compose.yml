@@ -1,5 +1,8 @@
 version: "3.1"
 
+include:
+  - docker-compose.data-api.yml
+
 volumes:
   postgresql_data:
   ldap_data:
@@ -314,7 +317,7 @@ services:
       - georchestra_datadir:/etc/georchestra
       - datafeeder_uploads:/tmp/datafeeder
     environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m
+      - JAVA_OPTS=-Xms512m -Xmx512m -Dspring.profiles.active=georchestra,data-api-schemas -Dspring.config.additional-location=file:/etc/georchestra/data-api/application.yaml
       # You can set a higher loglevel this way: (ref. https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-levels)
       - LOGGING_LEVEL_ORG_GEORCHESTRA_DATAFEEDER=INFO
     env_file:
@@ -412,4 +415,3 @@ services:
       - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
     restart: always
 
-      
