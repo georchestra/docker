@@ -23,4 +23,3 @@ services:
       POSTGRES_DB: datafeeder
       POSTGRES_USER: georchestra
       POSTGRES_PASSWORD: georchestra
-      JAVA_TOOL_OPTIONS: "-Ddataapi.configdir=/etc/georchestra"
