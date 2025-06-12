@@ -119,7 +119,7 @@ services:
 #      - .envs-ldap
 #      - .envs-database-georchestra
 #    restart: always
-  
+
   header:
     image: georchestra/header:latest
     healthcheck:
@@ -344,7 +344,7 @@ services:
     restart: always
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.21
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
     ulimits:
       memlock:
         soft: -1
@@ -362,10 +362,12 @@ services:
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
+      xpack.security.enabled: false
+      xpack.security.enrollment.enabled: false
     restart: always
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.1
+    image: docker.elastic.co/kibana/kibana:8.14.3
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -398,7 +400,7 @@ services:
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
-      
+
   rabbitmq:
     image: docker.io/bitnami/rabbitmq:3.12
     healthcheck:
