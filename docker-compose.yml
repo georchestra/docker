@@ -362,8 +362,8 @@ services:
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-      xpack.security.enabled: false
-      xpack.security.enrollment.enabled: false
+      # ES_USERNAME is elastic by default
+      ES_PASSWORD: changeme
     restart: always
 
   kibana:
