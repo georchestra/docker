@@ -3,7 +3,6 @@ ES_PASSWORD=changeme
 
 # Only needed for the built-in elasticsearch
 ELASTIC_PASSWORD=${ES_PASSWORD}
-ELASTICSEARCH_PASSWORD=${ES_PASSWORD}
 
 # Disable SSL for Elasticsearch
 xpack.security.transport.ssl.enabled: false
