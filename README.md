@@ -164,6 +164,14 @@ For [geoserver_privileged_user_passwd.txt](secrets/geoserver_privileged_user_pas
 
 Most changes will require a service restart, except maybe updating viewer contexts & addons (`F5` will do).
 
+### Kibana
+
+In order to have Kibana up and running, you will need to:
+1. After Elasticsearch up and healthy, launch the command `docker compose exec -it elasticsearch bin/elasticsearch-reset-password -u kibana_system`. It will ask to fill a password for the `kibana_system` user.
+2. Uncomment and fill this password into the `.envs-elastic` file.
+3. Enable kibana server with `scale: 1` in `docker-compose.yml`.
+4. Start Kibana with `docker compose up -d kibana`.
+
 ## Building
 
 Images used in the current composition are pulled from docker hub, which means they've been compiled by [github actions](https://github.com/georchestra/georchestra/actions).
