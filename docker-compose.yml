@@ -352,7 +352,7 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -363,7 +363,7 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       # ES_USERNAME is elastic by default
-      ES_PASSWORD: changeme
+      ELASTIC_PASSWORD: changeme
     restart: always
 
   kibana:
@@ -376,6 +376,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+    environment:
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: changeme
     env_file:
       - .envs-hosts
     volumes:
