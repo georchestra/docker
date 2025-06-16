@@ -303,7 +303,7 @@ services:
     restart: always
 
   datafeeder:
-    image: georchestra/datafeeder:25.0.x
+    image: georchestra/datafeeder:1.0.x
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/datafeeder >/dev/null || exit 1"]
       interval: 30s
@@ -329,7 +329,7 @@ services:
     restart: always
 
   import:
-    image: georchestra/datafeeder-frontend:25.0.x
+    image: georchestra/datafeeder-frontend:1.0.x
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:80/ >/dev/null || exit 1"]
       interval: 30s
@@ -353,7 +353,7 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -364,7 +364,7 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       # ES_USERNAME is elastic by default
-      ES_PASSWORD: changeme
+      ELASTIC_PASSWORD: changeme
     restart: always
 
   kibana:
@@ -377,6 +377,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+    environment:
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: changeme
     env_file:
       - .envs-hosts
     volumes:
