@@ -1,5 +1,3 @@
-version: "3.1"
-
 include:
   - docker-compose.data-api.yml
 
@@ -208,8 +206,6 @@ services:
         condition: service_healthy
       database:
         condition: service_healthy
-      kibana:
-        condition: service_healthy
       elasticsearch:
         condition: service_healthy
     volumes:
@@ -222,6 +218,7 @@ services:
     env_file:
       - .envs-hosts
       - .envs-database-georchestra
+      - .envs-elastic
     restart: always
 
   datahub:
@@ -359,14 +356,15 @@ services:
     depends_on:
       envsubst:
         condition: service_completed_successfully
+    env_file:
+      - .envs-elastic
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-      # ES_USERNAME is elastic by default
-      ELASTIC_PASSWORD: changeme
     restart: always
 
   kibana:
+    scale: 0
     image: docker.elastic.co/kibana/kibana:8.14.3
     depends_on:
       elasticsearch:
@@ -376,11 +374,9 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    environment:
-      ELASTICSEARCH_USERNAME: elastic
-      ELASTICSEARCH_PASSWORD: changeme
     env_file:
       - .envs-hosts
+      - .envs-elastic
     volumes:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     restart: always

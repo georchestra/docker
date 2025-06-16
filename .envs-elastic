@@ -1,0 +1,14 @@
+ES_USERNAME=elastic
+ES_PASSWORD=changeme
+
+# Only needed for the built-in elasticsearch
+ELASTIC_PASSWORD=${ES_PASSWORD}
+ELASTICSEARCH_PASSWORD=${ES_PASSWORD}
+
+# Disable SSL for Elasticsearch
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
+
+#In order to use Kibana, you need to set the password for the kibana_system user.
+#docker exec -it es01 bin/elasticsearch-reset-password -u kibana_system
+#KIBANA_PASSWORD=<your_kibana_password>
