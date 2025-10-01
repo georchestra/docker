@@ -399,7 +399,7 @@ services:
     restart: always
 
   rabbitmq:
-    image: docker.io/bitnami/rabbitmq:3.12
+    image: docker.io/bitnamilegacy/rabbitmq:3.12
     healthcheck:
       test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
       interval: 60s
