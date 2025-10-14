@@ -261,7 +261,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:2024.02.00-geOrchestra
+    image: georchestra/mapstore:2024.02.00-geOrchestra-headerConfig-6abf34
     healthcheck:
       test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
