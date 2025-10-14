@@ -401,7 +401,7 @@ services:
     restart: always
 
   rabbitmq:
-    image: docker.io/bitnami/rabbitmq:3.12
+    image: rabbitmq:3.13
     healthcheck:
       test: rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_local_alarms
       interval: 60s
@@ -413,6 +413,5 @@ services:
       - RABBITMQ_LOGS=-
       - RABBITMQ_DISK_FREE_ABSOLUTE_LIMIT=1GB
     volumes:
-      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+      - 'rabbitmq_data:/var/lib/rabbitmq/mnesia'
     restart: always
-
