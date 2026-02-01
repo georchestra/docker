@@ -156,6 +156,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=8G
+      - GEOSERVER_FILESYSTEM_SANDBOX=/mnt/geoserver_geodata
 
     env_file:
       - .envs-database-georchestra
