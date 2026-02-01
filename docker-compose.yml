@@ -411,6 +411,10 @@ services:
       SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
       SPRING_PROFILES_ACTIVE: standalone
       JAVA_OPTS: -Dfile.encoding=UTF-8
+    env_file:
+      - .envs-elastic
+      - .envs-database-georchestra
+      - .envs-common
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
