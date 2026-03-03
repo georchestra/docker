@@ -197,7 +197,7 @@ services:
       depends_on:
         - elasticsearch
       healthcheck:
-        test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
+        test: [ "CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1" ]
         interval: 30s
         timeout: 10s
         retries: 10
@@ -232,7 +232,7 @@ services:
   datahub:
     image: geonetwork/geonetwork-ui-datahub:latest
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -247,7 +247,7 @@ services:
   metadata-editor:
     image: geonetwork/geonetwork-ui-metadata-editor:latest
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:80/metadata-editor/ >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:80/metadata-editor/ >/dev/null || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -262,7 +262,7 @@ services:
   mapstore:
     image: georchestra/mapstore:latest
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 10
