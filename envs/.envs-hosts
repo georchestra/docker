@@ -17,6 +17,8 @@ ES_PORT=9200
 DATA_API_HOST=data-api
 
 # needed for geonetwork entrypoint DO NOT REMOVE
-CONSOLE_URL=http://${CONSOLE_HOST}:8080
+CONSOLE_URL=http://console:8080
+ES_HOST=elasticsearch
+ES_PORT=9200
 # needed for kibana DO NOT REMOVE
-ELASTICSEARCH_HOSTS=http://${ES_HOST}:${ES_PORT}
+ELASTICSEARCH_HOSTS=http://elasticsearch:9200

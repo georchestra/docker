@@ -2,6 +2,15 @@
 
 This repository is meant to offer a convenient way to start geOrchestra for **development** or **demo** purposes. Production use is not recommended without hardening measures.
 
+If you want to use this for production you might need to:
+1. modify the way to use certificates
+2. remove databases (database and postgis deployment and related volumes) from docker-compose
+3. update [.envs](envs/) files
+4. remove unwanted open ports
+5. modify volumes management (don't let docker service do it..), you might want to store them in specific path
+6. refit resources allocation with your use (Xmx Xms)
+
+
 ## Quick Start
 
 **1. Prerequisite**
@@ -25,14 +34,16 @@ git clone --recurse-submodules https://github.com/georchestra/docker.git
 
 Choose which branch to run, eg for latest stable:
 ```
-git checkout 24.0 && git submodule update
+git checkout 25.0 && git submodule update
 ```
 
 **3. Run**
 
+**3.1 Docker compose**
+
 The default docker-compose file contains all geOrchestra modules.
 
-It's recommended to double-check the `docker-compose.yml` and `docker-compose.override.yml` files if you need to comment useless modules (e.g extractor, mapstore,... ).
+It's recommended to double-check the `docker-compose.yml` file if you need to comment useless modules (e.g ogc-api-records, mapstore,... ).
 
 You need to use the new Compose plugin V2, `docker-compose` (V1) is not supported by default: [https://docs.docker.com/compose/install/linux/](https://docs.docker.com/compose/install/linux/).   
 If you still want to use the old `docker-compose` (V1), you need to remove all the parameters `depends_on` from the files `docker-compose.yml` and `docker-compose.override.yml`.
@@ -49,6 +60,43 @@ To stop geOrchestra:
 ```
 docker compose down
 ```
+
+**3.2 Docker swarm**
+
+[docker-compose.swarm.yml](docker-compose.swarm.yml) contains spécific services needed for deploying it in swarm
+
+In order to run you will need to run those few commands:
+
+To initialize your cluster
+```
+docker swarm init
+```
+To deploy/redeploy (after modification of the docker-compose) georchestra:
+```
+docker stack deploy -c docker-compose.yml -c docker-compose.swarm.yml georchestra
+```
+verify the stack is present
+```
+docker stack ls
+```
+Verify that services are running
+```
+docker stack services georchestra
+```
+To access the log of the gateway for instance you can use:
+```
+docker service logs georchestra_gateway
+```
+To restart a service :
+```
+docker service update --force georchestra_gateway
+```
+To stop/delete the deployment:
+```
+docker stack rm georchestra
+```
+
+
 
 **4. Play**
 
