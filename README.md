@@ -117,9 +117,7 @@ rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra-127-0-0-1.ni
 
 Files uploaded into this volume will also be available to the geoserver instance in `/mnt/geoserver_geodata/`.
 
-Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.  
-These emails can be read on https://georchestra-127-0-0-1.nip.io/webmail/ (with login `smtp` and password `smtp`).
-
+Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.
 
 ## Locally trust the TLS certificate for geOrchestra
 
@@ -165,17 +163,12 @@ These docker-compose files describe:
  * how they are linked together,
  * where the configuration and data volumes are
 
-The `docker-compose.override.yml` file adds services to interact with your geOrchestra instance (they are not part of geOrchestra "core"):
- * reverse proxy / load balancer
- * ssh / rsync services,
- * smtp, webmail.
-
 **Feel free to comment out the apps you do not need**.
 
 The base docker composition does not include any standalone geowebcache instance, nor the atlas module.
 If you need them, you have to include the corresponding complementary docker-compose file at run-time:
 ```
-docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.gwc.yml -f docker-compose.atlas.yml up
+docker compose -f docker-compose.yml up
 ```
 
 ## Upgrading
@@ -192,11 +185,11 @@ To upgrade, we recommend you to:
 This docker composition supports environment variables, if you need to customize something it might be in the different environment variables files.
 
 Here is the list of these files:
-- [.envs-common](.envs-common) 
-- [.envs-database-datafeeder](.envs-database-datafeeder)
-- [.envs-database-georchestra](.envs-database-georchestra)
-- [.envs-hosts](.envs-hosts)
-- [.envs-ldap](.envs-ldap)
+- [.envs-common](envs/.envs-common) 
+- [.envs-database-datafeeder](envs/.envs-database-datafeeder)
+- [.envs-database-georchestra](envs/.envs-database-georchestra)
+- [.envs-hosts](envs/.envs-hosts)
+- [.envs-ldap](envs/.envs-ldap)
 
 If you add variables, be careful because it might be added into the wrong/unwanted container.
 
@@ -217,7 +210,7 @@ Most changes will require a service restart, except maybe updating viewer contex
 
 In order to have Kibana up and running, you will need to:
 1. After Elasticsearch up and healthy, launch the command `docker compose exec -it elasticsearch bin/elasticsearch-reset-password -u kibana_system`. It will ask to fill a password for the `kibana_system` user.
-2. Uncomment and fill this password into the `.envs-elastic` file.
+2. Uncomment and fill this password into the `envs/.envs-elastic` file.
 3. Enable kibana server with `scale: 1` in `docker-compose.yml`.
 4. Start Kibana with `docker compose up -d kibana`.
 
@@ -282,11 +275,11 @@ https://techoverflow.net/2019/04/17/how-to-disable-elasticsearch-disk-quota-wate
 
 Beside georchestra/docker directory, you need to clone [georchestra/georchestra repo](https://github.com/georchestra/georchestra) first.
 
-Next, install maven to execute [main georchestra Makefile](https://github.com/georchestra/georchestra/blob/master/Makefile) on each modification (e.g console, security-proxy, whatever you change).
+Next, install maven to execute [main georchestra Makefile](https://github.com/georchestra/georchestra/blob/master/Makefile) on each modification (e.g console, gateway, whatever you change).
 
-For example, if you change some security-proxy code, use :
+For example, if you change some gateway code, use :
 
-`make docker-build-proxy`
+`make docker-build-gateway`
 
 ... to execute easily this maven command :
 
@@ -302,25 +295,30 @@ You can now test modifications locally with the current FQDN (by default `georch
 
 **3. Debug**
 
-Open `docker/docker-compose.yml` and identify `proxy` section.
+Open `docker/docker-compose.yml` and identify `gateway` section.
 
-Change `proxy` section to insert some JAVA options and ports `5005` to get :
+Change `gateway` section to insert some JAVA options and ports `5005` to get :
 
 ```
-  proxy:
-    image: georchestra/security-proxy:latest
+  gateway:
+    image: georchestra/gateway:latest-debug
     depends_on:
-      - ldap
-      - database
+    - database
     volumes:
-      - georchestra_datadir:/etc/georchestra
+    - ./config:/etc/georchestra
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005
-      - XMS=256M
-      - XMX=1G
+    - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005
+    - XMS=256M
+    - XMX=1G
+    env_file:
+    - ./envs/.envs-common
+    - ./envs/.envs-ldap
+    - ./envs/.envs-hosts
+    - ./envs/.envs-database-georchestra
     restart: always
     ports:
-      - "5005:5005"
+    - "5005:5005"
+    - "8080:8080"
 ```
 
 Apply Docker changes :
