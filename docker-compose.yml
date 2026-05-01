@@ -155,6 +155,7 @@ services:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=8G
+      - GEOSERVER_FILESYSTEM_SANDBOX=/mnt/geoserver_geodata
 
     env_file:
       - .envs-database-georchestra
@@ -413,6 +414,10 @@ services:
       SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
       SPRING_PROFILES_ACTIVE: standalone
       JAVA_OPTS: -Dfile.encoding=UTF-8
+    env_file:
+      - .envs-elastic
+      - .envs-database-georchestra
+      - .envs-common
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
