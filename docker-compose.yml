@@ -2,6 +2,7 @@ volumes:
   postgresql_data:
   ldap_data:
   ldap_config:
+  ldap_run:
   geoserver_geodata:
   geoserver_datadir:
   geoserver_tiles:
@@ -20,6 +21,28 @@ secrets:
     file: ./secrets/slapd_password.txt
 
 services:
+  caddy:
+    image: caddy:2.8-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "127.0.0.1:2019:2019"
+    environment:
+      - CADDY_ADMIN=0.0.0.0:2019
+    volumes:
+      - ./resources/ssl:/etc/certs:ro
+      - ./resources/caddy/etc:/etc/caddy:ro
+      - ./resources/caddy/data:/data/caddy
+      - ./resources/static:/usr/share/caddy/static:ro
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:2019/reverse_proxy/upstreams >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-common
+
   database:
     image: georchestra/database:latest
     env_file:
@@ -36,6 +59,8 @@ services:
       restart_policy:
         condition: on-failure
         window: 15m
+    ports:
+      - 5432:5432
     volumes:
       - postgresql_data:/var/lib/postgresql
     restart: always
@@ -72,7 +97,7 @@ services:
     restart: always
 
   gateway:
-    image: georchestra/gateway:latest
+    image: georchestra/gateway:latest-debug
     depends_on:
       - database
     volumes:
@@ -95,24 +120,17 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      - ldap
+      - database
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xms256m -Xmx512m
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-rabbitmq
-      - .envs-database-georchestra
-      - .envs-hosts
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-hosts
     restart: always
 
   geoserver:
@@ -170,69 +188,70 @@ services:
       - ./envs/.envs-elastic
     restart: always
 
-    elasticsearch:
-      image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
-      deploy:
-        resources:
-          limits:
-            cpus: "0"
-            memory: "1g"
-      volumes:
-        - esdata:/usr/share/elasticsearch/data
-      healthcheck:
-        test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
-        interval: 30s
-        timeout: 10s
-        retries: 10
-      env_file:
-        - ./envs/.envs-elastic
-      environment:
-        discovery.type: single-node
-        ES_JAVA_OPTS: -Xms512m -Xmx512m
-      restart: always
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    deploy:
+      resources:
+        limits:
+          cpus: "0"
+          memory: "1g"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-elastic
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    restart: always
 
-    kibana:
-      scale: 0
-      image: docker.elastic.co/kibana/kibana:8.14.3
-      depends_on:
-        - elasticsearch
-      healthcheck:
-        test: [ "CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1" ]
-        interval: 30s
-        timeout: 10s
-        retries: 10
-      env_file:
-        - ./envs/.envs-hosts
-        - ./envs/.envs-elastic
-      volumes:
-        - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-      restart: always
+  kibana:
+    deploy:
+      replicas: 0
+    image: docker.elastic.co/kibana/kibana:8.14.3
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-hosts
+      - ./envs/.envs-elastic
+    volumes:
+      - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    restart: always
 
-    ogc-api-records:
-      image: geonetwork/gn-cloud-ogc-api-records-service:4.4.7-0
-      depends_on:
-        - geonetwork
-        - database
-        - elasticsearch
-      environment:
-        LANG: en_US.UTF-8
-        SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
-        SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
-        SPRING_PROFILES_ACTIVE: standalone
-        JAVA_OPTS: -Dfile.encoding=UTF-8
-      env_file:
-        - ./envs/.envs-common
-        - ./envs/.envs-hosts
-        - ./envs/.envs-database-georchestra
-        - ./envs/.envs-elastic
-      volumes:
-        - ./config:/etc/georchestra
-      restart: always
+  ogc-api-records:
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.4.7-0
+    depends_on:
+      - geonetwork
+      - database
+      - elasticsearch
+    environment:
+      LANG: en_US.UTF-8
+      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
+      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+      SPRING_PROFILES_ACTIVE: standalone
+      JAVA_OPTS: -Dfile.encoding=UTF-8
+    env_file:
+      - ./envs/.envs-common
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-elastic
+    volumes:
+      - ./config:/etc/georchestra
+    restart: always
 
   datahub:
     image: geonetwork/geonetwork-ui-datahub:latest
     healthcheck:
-      test: [ "CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1" ]
+      test: ["CMD-SHELL", "curl -s -f http://localhost:80/datahub/ >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -247,7 +266,7 @@ services:
   metadata-editor:
     image: geonetwork/geonetwork-ui-metadata-editor:latest
     healthcheck:
-      test: [ "CMD-SHELL", "curl -s -f http://localhost:80/metadata-editor/ >/dev/null || exit 1" ]
+      test: ["CMD-SHELL", "curl -s -f http://localhost:80/metadata-editor/ >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -262,7 +281,7 @@ services:
   mapstore:
     image: georchestra/mapstore:latest
     healthcheck:
-      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1" ]
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/mapstore/configs/config.json >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
