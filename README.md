@@ -1,5 +1,7 @@
 # geOrchestra on Docker
 
+## Preconisation
+
 This repository is meant to offer a convenient way to start geOrchestra for **development** or **demo** purposes. Production use is not recommended without hardening measures.
 
 If you want to use this for production you might need to:
