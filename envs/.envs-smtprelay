@@ -1,0 +1,6 @@
+MAILNAME="georchestra.org"
+POSTMASTER="postmaster.georchestra@georchestra.org"
+RELAY_HOST=""
+RELAY_PASSWORD=""
+RELAY_PORT="25"
+RELAY_USERNAME=""

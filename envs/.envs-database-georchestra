@@ -1,0 +1,24 @@
+# envs-database-georchestra
+PGHOST=database
+PGPORT=5432
+PGDATABASE=georchestra
+PGUSER=georchestra
+PGPASSWORD=georchestra
+
+POSTGRES_USER=georchestra
+POSTGRES_PASSWORD=georchestra
+
+# extra env var for jdbc
+GEODATA_PGDATABASE=georchestra
+GEODATA_PGHOST=database
+GEODATA_PGPORT=5432
+GEODATA_PGUSER=georchestra
+GEODATA_PGPASSWORD=georchestra
+
+# extra env for gs jdbc/gwc
+GWC_PGDATABASE=georchestra
+GWC_PGHOST=database
+GWC_PGPORT=5432
+GWC_PGUSERNAME=georchestra
+GWC_PGPASSWORD=georchestra
+

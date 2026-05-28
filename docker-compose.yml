@@ -1,10 +1,8 @@
-include:
-  - docker-compose.data-api.yml
-
 volumes:
   postgresql_data:
   ldap_data:
   ldap_config:
+  ldap_run:
   geoserver_geodata:
   geoserver_datadir:
   geoserver_tiles:
@@ -14,50 +12,61 @@ volumes:
   datafeeder_uploads:
   datafeeder_postgis_data:
   esdata:
-  georchestra_datadir:
+  smtp_maildir:
+  mail:
+  mail_spool:
 
 secrets:
   slapd_password:
     file: ./secrets/slapd_password.txt
 
 services:
-  copy-datadir:
-    image: alpine
-    command: sh -c "rm -r /etc/georchestra/* ; cp -r -f -v /mnt/datadir/* /etc/georchestra/ ; chmod 777 -R -v /etc/georchestra/" # "sleep 6000"
-    volumes:
-      - ./config:/mnt/datadir
-      - georchestra_datadir:/etc/georchestra
-
-  envsubst:
-    image: georchestra/k8s-initcontainer-envsubst
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
+  caddy:
+    image: caddy:2.8-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "127.0.0.1:2019:2019"
     environment:
-      - DEBUG=yes
-      - SUBST_FILES=/etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
-    env_file:
-      - .envs-common
-      - .envs-hosts
+      - CADDY_ADMIN=0.0.0.0:2019
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./resources/ssl:/etc/certs:ro
+      - ./resources/caddy/etc:/etc/caddy:ro
+      - ./resources/caddy/data:/data/caddy
+      - ./resources/static:/usr/share/caddy/static:ro
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:2019/reverse_proxy/upstreams >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-common
 
   database:
     image: georchestra/database:latest
     env_file:
-      - .envs-database-georchestra
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
+      - ./envs/.envs-database-georchestra
+    environment:
+      - PGHOST=localhost
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U georchestra"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    deploy:
+      restart_policy:
+        condition: on-failure
+        window: 15m
+    ports:
+      - 5432:5432
     volumes:
       - postgresql_data:/var/lib/postgresql
     restart: always
 
   ldap:
     image: georchestra/ldap:latest
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
     secrets:
       - slapd_password
     environment:
@@ -70,96 +79,38 @@ services:
       - RUN_AS_GID=0
       - LDAPHOST=localhost
     env_file:
-      - .envs-ldap
+      - ./envs/.envs-ldap
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
+    tmpfs:
+      - /var/run/slapd
+    restart: always
+
+  smtp:
+    image: camptocamp/exim:latest
+    env_file:
+      - ./envs/.envs-smtprelay
+    volumes:
+      - mail:/var/mail
+      - mail_spool:/var/spool/exim4
     restart: always
 
   gateway:
-    image: georchestra/gateway:latest
+    image: georchestra/gateway:latest-debug
     depends_on:
       - database
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - JAVA_TOOL_OPTIONS=-Dgeorchestra.datadir=/etc/georchestra
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-hosts
-      - .envs-database-georchestra
-
-# uncomment for oauth 2.0
-#  cas:
-#    image: georchestra/cas:latest
-#    healthcheck:
-#      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/cas/login >/dev/null || exit 1" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 10
-#    depends_on:
-#      ldap:
-#        condition: service_healthy
-#    volumes:
-#      - georchestra_datadir:/etc/georchestra
-#    environment:
-#      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-#      - XMS=256M
-#      - XMX=1G
-#    env_file:
-#      - .envs-common
-#      - .envs-ldap
-#      - .envs-database-georchestra
-#    restart: always
-
-  header:
-    image: georchestra/header:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/header/img/logo.png >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=512M
-    env_file:
-      - .envs-common
-    restart: always
-
-  geoserver:
-    image: georchestra/geoserver:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f 'http://localhost:8080/geoserver/ows?SERVICE=WMS&LAYERS=geor:public_layer&FORMAT=image/png&VERSION=1.3.0&SLD_VERSION=1.1.0&REQUEST=GetMap&CRS=EPSG:3857&BBOX=-20820223,-20820223,20820223,20820223&WIDTH=10&HEIGHT=10' >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-      - geoserver_datadir:/mnt/geoserver_datadir
-      - geoserver_geodata:/mnt/geoserver_geodata
-      - geoserver_tiles:/mnt/geoserver_tiles
-      - geoserver_native_libs:/mnt/geoserver_native_libs
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=8G
-
-    env_file:
-      - .envs-database-georchestra
-      - .envs-database-datafeeder
-    restart: always
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+    ports:
+      - "8080:8080"
 
   console:
     image: georchestra/console:latest
@@ -169,21 +120,46 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
+      - ldap
+      - database
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xms256m -Xmx512m
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-database-georchestra
-      - .envs-hosts
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-hosts
+    restart: always
+
+  geoserver:
+    image: georchestra/geoserver:latest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f 'http://localhost:8080/geoserver/ows?SERVICE=WMS&LAYERS=geor:public_layer&FORMAT=image/png&VERSION=1.3.0&SLD_VERSION=1.1.0&REQUEST=GetMap&CRS=EPSG:3857&BBOX=-20820223,-20820223,20820223,20820223&WIDTH=10&HEIGHT=10' >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "8g"
+    depends_on:
+      - ldap
+      - database
+    volumes:
+      - ./config:/etc/georchestra
+      - geoserver_datadir:/mnt/geoserver_datadir
+      - geoserver_geodata:/mnt/geoserver_geodata
+      - geoserver_tiles:/mnt/geoserver_tiles
+      - geoserver_native_libs:/mnt/geoserver_native_libs
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xms256m -Xmx8g 
+    env_file:
+      - ./envs/.envs-common
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-database-datafeeder
     restart: always
 
   geonetwork:
@@ -193,24 +169,84 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "4g"
     depends_on:
-      console:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+      - console
+      - database
+      - elasticsearch
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
-      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=6G
+      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xms256m -Xmx4g
     env_file:
-      - .envs-hosts
-      - .envs-database-georchestra
-      - .envs-elastic
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-elastic
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    deploy:
+      resources:
+        limits:
+          cpus: "0"
+          memory: "1g"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-elastic
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    restart: always
+
+  kibana:
+    deploy:
+      replicas: 0
+    image: docker.elastic.co/kibana/kibana:8.14.3
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - ./envs/.envs-hosts
+      - ./envs/.envs-elastic
+    volumes:
+      - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    restart: always
+
+  ogc-api-records:
+    image: geonetwork/gn-cloud-ogc-api-records-service:4.4.7-0
+    depends_on:
+      - geonetwork
+      - database
+      - elasticsearch
+    environment:
+      LANG: en_US.UTF-8
+      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
+      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+      SPRING_PROFILES_ACTIVE: standalone
+      JAVA_OPTS: -Dfile.encoding=UTF-8
+    env_file:
+      - ./envs/.envs-common
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-elastic
+    volumes:
+      - ./config:/etc/georchestra
     restart: always
 
   datahub:
@@ -220,15 +256,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datahub/scripts
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     restart: always
 
   metadata-editor:
@@ -238,35 +271,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/conf
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/metadata-editor/scripts
     volumes:
-      - georchestra_datadir:/etc/georchestra
-    restart: always
-
-  analytics:
-    image: georchestra/analytics:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    env_file:
-      - .envs-database-georchestra
+      - ./config:/etc/georchestra
     restart: always
 
   mapstore:
@@ -277,35 +287,30 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      database:
-        condition: service_healthy
-      ldap:
-        condition: service_healthy
+      - database
+      - ldap
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - mapstore_extensions:/mnt/mapstore_extensions
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
     env_file:
-      - .envs-ldap
-      - .envs-database-georchestra
+      - ./envs/.envs-ldap
+      - ./envs/.envs-database-georchestra
     restart: always
 
   postgis:
     # used by datafeeder to ingest uploaded user datasets into
-    image: postgis/postgis:13-3.1-alpine
+    image: postgis/postgis:18-3.6-alpine
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 3s
       retries: 3
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
     env_file:
-      - .envs-database-datafeeder
+      - ./envs/.envs-database-datafeeder
     volumes:
-      - datafeeder_postgis_data:/var/lib/postgresql/data
+      - datafeeder_postgis_data:/var/lib/postgresql
     restart: always
 
   datafeeder:
@@ -316,22 +321,20 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      database:
-        condition: service_healthy
-      postgis:
-        condition: service_healthy
+      - database
+      - postgis
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - datafeeder_uploads:/tmp/datafeeder
     environment:
       - JAVA_OPTIONS=-Xms512m -Xmx512m -Dspring.profiles.active=georchestra,data-api-schemas -Dspring.config.additional-location=file:/etc/georchestra/data-api/application.yaml
       # You can set a higher loglevel this way: (ref. https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-levels)
       - LOGGING_LEVEL_ORG_GEORCHESTRA_DATAFEEDER=INFO
     env_file:
-      - .envs-common
-      - .envs-hosts
-      - .envs-database-georchestra
-      - .envs-database-datafeeder
+      - ./envs/.envs-common
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-database-datafeeder
     restart: always
 
   import:
@@ -342,78 +345,9 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      envsubst:
-        condition: service_completed_successfully
+      - datafeeder
     environment:
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datafeeder/scripts/import
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     restart: always
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    deploy:
-      resources:
-        limits:
-          memory: 4g
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -u elastic:$$ELASTIC_PASSWORD -s -f http://localhost:9200/_cat/health  >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    env_file:
-      - .envs-elastic
-    environment:
-      discovery.type: single-node
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-    restart: always
-
-  kibana:
-    scale: 0
-    image: docker.elastic.co/kibana/kibana:8.14.3
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:5601/api/status >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    environment:
-      ELASTICSEARCH_USERNAME: elastic
-      ELASTICSEARCH_PASSWORD: changeme
-    env_file:
-      - .envs-hosts
-      - .envs-elastic
-    volumes:
-      - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    restart: always
-
-  ogc-api-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:4.2.2
-    depends_on:
-      geonetwork:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    environment:
-      LANG: en_US.UTF-8
-      SERVER_SERVLET_CONTEXT_PATH: /ogc-api-records
-      SPRING_CONFIG_LOCATION: file:///etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
-      SPRING_PROFILES_ACTIVE: standalone
-      JAVA_OPTS: -Dfile.encoding=UTF-8
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    restart: always
-
