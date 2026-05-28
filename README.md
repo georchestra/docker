@@ -45,7 +45,7 @@ git checkout 25.0 && git submodule update
 
 The default docker-compose file contains all geOrchestra modules.
 
-It's recommended to double-check the `docker-compose.yml` file if you need to comment useless modules (e.g ogc-api-records, mapstore,... ).
+It's recommended to double-check the `docker-compose.yml` file if you need to comment modules you don't need (e.g ogc-api-records, mapstore,... ).
 
 You need to use the new Compose plugin V2, `docker-compose` (V1) is not supported by default: [https://docs.docker.com/compose/install/linux/](https://docs.docker.com/compose/install/linux/).   
 If you still want to use the old `docker-compose` (V1), you need to remove all the parameters `depends_on` from the files `docker-compose.yml` and `docker-compose.override.yml`.
@@ -66,6 +66,8 @@ docker compose down
 **3.2 Docker swarm**
 
 [docker-compose.swarm.yml](docker-compose.swarm.yml) contains spécific services needed for deploying it in swarm
+
+On the first deploy using swarm, some services may fail (and restart), it is normal because there is no possible dependancies, in the case you should wait longer and check when mandatory service are up (eg. ldap, database), everything should get running and up.
 
 In order to run you will need to run those few commands:
 
@@ -97,6 +99,11 @@ To stop/delete the deployment:
 ```
 docker stack rm georchestra
 ```
+If you need to clean all volumes from you test you ca use it command:
+```
+STACK_NAME=georchestra
+for vol in `docker volume ls --filter "Name=${STACK_NAME}_.*" --format json | jq -r '.Name'`; do docker volume rm $vol ; done
+```
 
 
 
@@ -111,15 +118,11 @@ To login, use these credentials:
  * `testuser` / `testuser`
  * `testadmin` / `testadmin`
 
-To upload data into the GeoServer data volume (`geoserver_geodata`), use `rsync`:
-```
-rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra-127-0-0-1.nip.io:/mnt/geoserver_geodata/
-```
-(password is: `geoserver`)
+To upload data into the GeoServer data volume (`geoserver_geodata`), use `docker volume inspect docker_geoserver_geodata `  to get the path where it is stored and use cp to copy where you want
 
 Files uploaded into this volume will also be available to the geoserver instance in `/mnt/geoserver_geodata/`.
 
-Emails sent by the SDI (eg when users request a new password) will not be relayed on the internet but trapped by a local SMTP service.
+Emails sent by the SDI (eg when users request a new password) will relayed by the service "smtp" on the internet, you can configure it in the file [.envs-smtprelay](envs/.envs-smtprelay).
 
 ## Locally trust the TLS certificate for geOrchestra
 
@@ -210,11 +213,21 @@ Most changes will require a service restart, except maybe updating viewer contex
 
 ### Kibana
 
+
+The optional `kibana` service is used for dashboarding purposes and is integrated to the GeoNetwork admin UI. See in the `Statistics & status / Content statistics` admin menu to access it.
+
+A specific configuration is provided in the `kibana/` subdirectory.
+
+Please note that it will require to load by hand the following file from the kibana admin ui:
+
+https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.0.6/es/es-dashboards/data/export.ndjson#
+
+
 In order to have Kibana up and running, you will need to:
 1. After Elasticsearch up and healthy, launch the command `docker compose exec -it elasticsearch bin/elasticsearch-reset-password -u kibana_system`. It will ask to fill a password for the `kibana_system` user.
 2. Uncomment and fill this password into the `envs/.envs-elastic` file.
 3. Enable kibana server with `scale: 1` in `docker-compose.yml`.
-4. Start Kibana with `docker compose up -d kibana`.
+4. Start Kibana with `docker compose up -d kibana` or ``.
 
 ## Building
 
@@ -248,17 +261,6 @@ to
 ```
 geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
 ```
-
-## Kibana
-
-The optional `kibana` service is used for dashboarding purposes and is integrated to the GeoNetwork admin UI. See in the `Statistics & status / Content statistics` admin menu to access it.
-
-A specific configuration is provided in the `kibana/` subdirectory.
-
-Please note that it will require to load by hand the following file from the kibana admin ui:
-
-https://raw.githubusercontent.com/georchestra/geonetwork/georchestra-gn4-4.0.6/es/es-dashboards/data/export.ndjson#
-
 
 
 ## Elasticsearch
