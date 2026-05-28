@@ -2,3 +2,5 @@
 FQDN=georchestra-127-0-0-1.nip.io
 SMTPHOST=smtp
 SMTPPORT=25
+
+GEOSERVER_CSRF_WHITELIST=georchestra-127-0-0-1.nip.io

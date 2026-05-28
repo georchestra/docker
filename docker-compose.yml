@@ -156,8 +156,8 @@ services:
       - geoserver_native_libs:/mnt/geoserver_native_libs
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Xms256m -Xmx8g 
-      - GEOSERVER_CSRF_WHITELIST=georchestra-127-0-0-1.nip.io
     env_file:
+      - ./envs/.envs-common
       - ./envs/.envs-database-georchestra
       - ./envs/.envs-database-datafeeder
     restart: always
