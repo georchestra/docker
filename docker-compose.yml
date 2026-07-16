@@ -22,6 +22,13 @@ secrets:
   slapd_password:
     file: ./secrets/slapd_password.txt
 
+networks:
+  default:
+  # Isolated network: only the gateway and external-proxy sit on it, so the
+  # external-proxy container has no route to database/ldap/geoserver/etc.
+  # on the default network, even though it proxies arbitrary external URLs.
+  external-proxy:
+
 services:
   copy-datadir:
     image: alpine
@@ -68,6 +75,9 @@ services:
     image: georchestra/gateway:3.0.1
     depends_on:
       - database
+    networks:
+      - default
+      - external-proxy
     volumes:
       - georchestra_datadir:/etc/georchestra
     environment:
@@ -217,6 +227,22 @@ services:
       - .envs-ldap
       - .envs-database-georchestra
     restart: always
+
+  # Scale this service to 1 in order to be able to proxy requests to services where CORS isn't enabled or well configured. 
+  # Also edit datahub default.toml and mapstore's localConfig.json to use this proxy iif wanted.
+  # Hint: better use this one than mapstore's in order to restrict access to internal network
+  external-proxy:
+    scale: 0
+    image: georchestra/http-proxy:1.5.0-georchestra-01
+    networks:
+      - external-proxy
+    depends_on:
+      copy-datadir:
+        condition: service_completed_successfully
+    environment:
+      - PROXY_PROP_PATH=/etc/georchestra/external-proxy/proxy.properties
+    volumes:
+      - georchestra_datadir:/etc/georchestra
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.13
