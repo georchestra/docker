@@ -159,7 +159,7 @@ services:
       - georchestra_datadir:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
-      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
     env_file:
@@ -167,8 +167,6 @@ services:
       - .envs-database-georchestra
       - .envs-elastic
     restart: always
-    ports:
-      - "5005:5005"
 
   datahub:
     image: geonetwork/geonetwork-ui-datahub:latest
