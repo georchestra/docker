@@ -101,7 +101,7 @@ The current FQDN `georchestra-127-0-0-1.nip.io` resolves to 127.0.1.1, thanks to
 
 To change it:
 
-1. Update the FQDN variable in [.envs-common](.envs-common) file (hint: grep for `georchestra-127-0-0-1.nip.io`)
+1. Update the FQDN variable in [envs/.envs-common](envs/.envs-common) file (hint: grep for `georchestra-127-0-0-1.nip.io`)
 2. Two options for the TLS/SSL certificate:
     * If your web server is exposed to the internet (most likely it is), remove `tls internal` line in the file `resources/caddy/etc/Caddyfile`.
     * If it is not, put a valid TLS certificate and a private key in the `resources/ssl` folder and declare it in the file `resources/caddy/etc/Caddyfile`.
@@ -144,11 +144,11 @@ To upgrade, we recommend you to:
 This docker composition supports environment variables, if you need to customize something it might be in the different environment variables files.
 
 Here is the list of these files:
-- [.envs-common](.envs-common) 
-- [.envs-database-datafeeder](.envs-database-datafeeder)
-- [.envs-database-georchestra](.envs-database-georchestra)
-- [.envs-hosts](.envs-hosts)
-- [.envs-ldap](.envs-ldap)
+- [envs/.envs-common](envs/.envs-common) 
+- [envs/.envs-database-datafeeder](envs/.envs-database-datafeeder)
+- [envs/.envs-database-georchestra](envs/.envs-database-georchestra)
+- [envs/.envs-hosts](envs/.envs-hosts)
+- [envs/.envs-ldap](envs/.envs-ldap)
 
 If you add variables, be careful because it might be added into the wrong/unwanted container.
 
@@ -169,7 +169,7 @@ Most changes will require a service restart, except maybe updating viewer contex
 
 In order to have Kibana up and running, you will need to:
 1. After Elasticsearch up and healthy, launch the command `docker compose exec -it elasticsearch bin/elasticsearch-reset-password -u kibana_system`. It will ask to fill a password for the `kibana_system` user.
-2. Uncomment and fill this password into the `.envs-elastic` file.
+2. Uncomment and fill this password into the `envs/.envs-elastic` file.
 3. Enable kibana server with `scale: 1` in `docker-compose.yml`.
 4. Start Kibana with `docker compose up -d kibana`.
 
