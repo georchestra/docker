@@ -181,9 +181,9 @@ services:
       copy-datadir:
         condition: service_completed_successfully
     environment:
-      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
-      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
-      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datahub/scripts
+      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/assets
+      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/conf
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/geonetwork-ui/scripts
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
@@ -199,9 +199,9 @@ services:
       copy-datadir:
         condition: service_completed_successfully
     environment:
-      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/assets
-      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/conf
-      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/metadata-editor/scripts
+      ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/assets
+      CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/conf
+      CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/geonetwork-ui/scripts
     volumes:
       - georchestra_datadir:/etc/georchestra
     restart: always
