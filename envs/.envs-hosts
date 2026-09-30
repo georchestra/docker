@@ -20,4 +20,3 @@ DATA_API_HOST=data-api
 CONSOLE_URL=http://${CONSOLE_HOST}:8080
 # needed for kibana DO NOT REMOVE
 ELASTICSEARCH_HOSTS=http://${ES_HOST}:${ES_PORT}
-
