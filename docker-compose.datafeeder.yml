@@ -143,6 +143,7 @@ configs:
       - ./envs/.envs-ldap
       - ./envs/.envs-hosts
       - ./envs/.envs-database-georchestra
+      - ./envs/.envs-database-datafeeder
 
   postgres:
     image: postgres:16

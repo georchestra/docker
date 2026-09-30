@@ -1,3 +1,4 @@
+GATEWAY_HOST=gateway
 ANALYTICS_HOST=analytics
 CAS_HOST=cas
 CONSOLE_HOST=console
@@ -6,8 +7,8 @@ GEOSERVER_HOST=geoserver
 HEADER_HOST=header
 GEOWEBCACHE_HOST=geowebcache
 MAPSTORE_HOST=mapstore
-DATAFEEDER_HOST=datafeeder
-IMPORT_HOST=import
+DATAFEEDER_BACKEND_HOST=datafeeder-backend
+DATAFEEDER_FRONTEND_HOST=datafeeder-frontend
 DATAHUB_HOST=datahub
 OGC_API_RECORDS_HOST=ogc-api-records
 KB_HOST=kibana
