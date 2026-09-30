@@ -33,18 +33,12 @@ services:
     image: georchestra/database:26.0.0
     env_file:
       - ./envs/.envs-database-georchestra
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
     volumes:
       - postgresql_data:/var/lib/postgresql
     restart: always
 
   ldap:
     image: georchestra/ldap:26.0.x
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
     secrets:
       - slapd_password
     environment:
@@ -66,7 +60,8 @@ services:
   gateway:
     image: georchestra/gateway:3.0.1
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - default
       - external-proxy
@@ -185,9 +180,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/geonetwork-ui/conf
@@ -234,9 +226,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
     env_file:
       - ./envs/.envs-elastic
     environment:
@@ -269,9 +258,6 @@ services:
     image: georchestra/http-proxy:1.5.0-georchestra-01
     networks:
       - external-proxy
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
     environment:
       - PROXY_PROP_PATH=/etc/georchestra/external-proxy/proxy.properties
     volumes:
