@@ -92,8 +92,6 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-    copy-datadir:
-      condition: service_completed_successfully
 
 services:
 
