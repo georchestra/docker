@@ -10,7 +10,7 @@ services:
     volumes:
       - geowebcache_datadir:/mnt/geowebcache_datadir
       - geowebcache_tiles:/mnt/geowebcache_tiles
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - XMS=1G
       - XMX=2G

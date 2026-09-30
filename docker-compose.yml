@@ -16,7 +16,6 @@ volumes:
   datafeeder_uploads:
   datafeeder_postgis_data:
   esdata:
-  georchestra_datadir:
 
 secrets:
   slapd_password:
@@ -30,17 +29,10 @@ networks:
   external-proxy:
 
 services:
-  copy-datadir:
-    image: alpine
-    command: sh -c "rm -r /etc/georchestra/* ; cp -r -f -v /mnt/datadir/* /etc/georchestra/ ; chmod 777 -R -v /etc/georchestra/" # "sleep 6000"
-    volumes:
-      - ./config:/mnt/datadir
-      - georchestra_datadir:/etc/georchestra
-
   database:
     image: georchestra/database:26.0.0
     env_file:
-      - .envs-database-georchestra
+      - ./envs/.envs-database-georchestra
     depends_on:
       copy-datadir:
         condition: service_completed_successfully
@@ -65,7 +57,7 @@ services:
       - RUN_AS_GID=0
       - LDAPHOST=localhost
     env_file:
-      - .envs-ldap
+      - ./envs/.envs-ldap
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
@@ -79,14 +71,14 @@ services:
       - default
       - external-proxy
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - JAVA_TOOL_OPTIONS=-Dgeorchestra.datadir=/etc/georchestra
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-hosts
-      - .envs-database-georchestra
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
 
   geoserver:
     image: georchestra/geoserver:2.28.4-georchestra-00
@@ -101,7 +93,7 @@ services:
       database:
         condition: service_healthy
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - geoserver_datadir:/mnt/geoserver_datadir
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
@@ -112,8 +104,8 @@ services:
       - XMX=8G
 
     env_file:
-      - .envs-database-georchestra
-      - .envs-database-datafeeder
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-database-datafeeder
     restart: always
 
   console:
@@ -129,16 +121,16 @@ services:
       database:
         condition: service_healthy
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-database-georchestra
-      - .envs-hosts
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-hosts
     restart: always
 
   geonetwork:
@@ -156,16 +148,16 @@ services:
       elasticsearch:
         condition: service_healthy
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=6G
     env_file:
-      - .envs-hosts
-      - .envs-database-georchestra
-      - .envs-elastic
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
+      - ./envs/.envs-elastic
     restart: always
     ports:
       - "5005:5005"
@@ -177,15 +169,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
-    depends_on:
-      copy-datadir:
-        condition: service_completed_successfully
+
     environment:
       ASSETS_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/assets
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/datahub/conf
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/datahub/scripts
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     restart: always
 
   metadata-editor:
@@ -203,7 +193,7 @@ services:
       CONFIG_DIRECTORY_OVERRIDE: /etc/georchestra/metadata-editor/conf
       CUSTOM_SCRIPTS_DIRECTORY: /etc/georchestra/metadata-editor/scripts
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     restart: always
 
   mapstore:
@@ -219,13 +209,13 @@ services:
       ldap:
         condition: service_healthy
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
       - mapstore_extensions:/mnt/mapstore_extensions
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -Dgeorchestra.datadir=/etc/georchestra -Dgeorchestra.extensions=/mnt/mapstore_extensions -DPRINT_BASE_URL=pdf
     env_file:
-      - .envs-ldap
-      - .envs-database-georchestra
+      - ./envs/.envs-ldap
+      - ./envs/.envs-database-georchestra
     restart: always
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.13
@@ -248,7 +238,7 @@ services:
       copy-datadir:
         condition: service_completed_successfully
     env_file:
-      - .envs-elastic
+      - ./envs/.envs-elastic
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
@@ -269,8 +259,8 @@ services:
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: changeme
     env_file:
-      - .envs-hosts
-      - .envs-elastic
+      - ./envs/.envs-hosts
+      - ./envs/.envs-elastic
     volumes:
       - ./resources/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     restart: always
@@ -285,7 +275,7 @@ services:
     environment:
       - PROXY_PROP_PATH=/etc/georchestra/external-proxy/proxy.properties
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
 
   datadb:
     image: postgis/postgis

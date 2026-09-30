@@ -96,6 +96,28 @@ x-airflow-common:
       condition: service_completed_successfully
 
 services:
+
+  datadb:
+    image: postgis/postgis
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: postgres # default database
+    volumes:
+      - pg_data:/var/lib/postgresql/
+    configs:
+      - source: datadb_init_sql
+        target: /docker-entrypoint-initdb.d/init.sql
+
+configs:
+  datadb_init_sql:
+    content: |
+      CREATE EXTENSION IF NOT EXISTS postgis;
+      CREATE SCHEMA IF NOT EXISTS data;
+      CREATE SCHEMA IF NOT EXISTS staging;
   datafeeder-frontend:
     image: georchestra/datafeeder-python-frontend:latest
     environment:
@@ -108,7 +130,7 @@ services:
   datafeeder-backend:
     image: georchestra/datafeeder-python-backend:latest
     volumes:
-      - georchestra_datadir:/etc/georchestra
+      - ./config:/etc/georchestra
     environment:
       - DATADIR=/etc/georchestra
       - DEBUG=true
@@ -117,10 +139,10 @@ services:
       database:
         condition: service_healthy
     env_file:
-      - .envs-common
-      - .envs-ldap
-      - .envs-hosts
-      - .envs-database-georchestra
+      - ./envs/.envs-common
+      - ./envs/.envs-ldap
+      - ./envs/.envs-hosts
+      - ./envs/.envs-database-georchestra
 
   postgres:
     image: postgres:16
