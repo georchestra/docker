@@ -60,7 +60,8 @@ services:
   gateway:
     image: georchestra/gateway:latest
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - default
       - external-proxy
