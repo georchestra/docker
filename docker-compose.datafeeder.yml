@@ -109,13 +109,6 @@ services:
     configs:
       - source: datadb_init_sql
         target: /docker-entrypoint-initdb.d/init.sql
-
-configs:
-  datadb_init_sql:
-    content: |
-      CREATE EXTENSION IF NOT EXISTS postgis;
-      CREATE SCHEMA IF NOT EXISTS data;
-      CREATE SCHEMA IF NOT EXISTS staging;
   datafeeder-frontend:
     image: georchestra/datafeeder-python-frontend:latest
     environment:
@@ -374,6 +367,13 @@ configs:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+
+configs:
+  datadb_init_sql:
+    content: |
+      CREATE EXTENSION IF NOT EXISTS postgis;
+      CREATE SCHEMA IF NOT EXISTS data;
+      CREATE SCHEMA IF NOT EXISTS staging;
 
 volumes:
   postgres-db-volume:
